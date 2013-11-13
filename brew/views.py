@@ -1,20 +1,23 @@
 from flask import request, render_template
-from brew import app
-from brew.models import recipes
+from bson.objectid import ObjectId
+from brew import app, mongo
 
 
 @app.route('/')
 def index():
+    recipes = mongo.db.recipes.find()
     return render_template('index.html', recipes=recipes)
 
 
-@app.route('/recipe/create', methods=['GET', 'POST'])
-def create_recipe():
+@app.route('/recipes', methods=['GET', 'POST'])
+def recipes():
     if request.method == 'POST':
-        print(request.get_json())
+        mongo.db.recipes.insert(request.get_json())
+
     return render_template('create.html')
 
 
 @app.route('/prepare/<recipe_id>')
 def prepare(recipe_id):
-    return render_template('prepare.html', recipe=recipes[0])
+    recipe = mongo.db.recipes.find_one(ObjectId(recipe_id))
+    return render_template('prepare.html', recipe=recipe)

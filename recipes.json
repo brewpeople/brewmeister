@@ -1,0 +1,69 @@
+[
+    {
+        "name": "Weizenbock", 
+        "characteristics": {
+            "gravity": 15.8,
+            "ebc": 7,
+            "ibu": 20, 
+            "alc": 6.2
+        }, 
+        "malts": [
+            {
+                "name": "Weizenmalz Hell",
+                "percentage": 48.7
+            }, 
+            {
+                "name": "Pilsner",
+                "percentage": 23
+            },
+            {
+                "name": "Wiener",
+                "percentage": 204
+            },
+            {
+                "name": "Cara dunkel",
+                "percentage": 3.5
+            },
+            {
+                "name": "Haferflocken",
+                "percentage": 3.5
+            }
+        ], 
+        "mash": [
+            {
+                "time": 10, 
+                "name": "Einmaischen", 
+                "temperature": 45.0
+            },
+            {
+                "time": 10, 
+                "name": "1. Rast", 
+                "temperature": 55.0
+            },
+            {
+                "time": 40, 
+                "name": "2. Rast", 
+                "temperature": 63.0
+            },
+            {
+                "time": 25, 
+                "name": "3. Rast", 
+                "temperature": 72.0
+            },
+            {
+                "time": 20, 
+                "name": "4. Rast", 
+                "temperature": 78.0
+            }
+        ], 
+        "boiling": {
+            "hops": [
+                {
+                    "alpha": 9.0, 
+                    "name": "Celeia"
+                }
+            ], 
+            "time": 90
+        }
+    }
+]
