@@ -1,0 +1,12 @@
+<!doctype html>
+<head>
+  <title>Brew-a-Beer</title>
+</head>
+<body>
+  <h1>Brew a …</h1>
+  {% for recipe in recipes %}
+  <a href="/prepare/{{ recipe.id }}">{{ recipe.name }}</a>
+  {% endfor %}
+
+  or create a <a href="/recipe/create">new</a> recipe.
+</body>
