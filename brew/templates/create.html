@@ -9,72 +9,74 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/jsonform/jsonform.js') }}"></script>
   </head>
   <body>
-    <h1>Brew a …</h1>
-    <div id="res" class="alert"></div>
-    <form></form>
-    <script type="text/javascript">
-      $('form').jsonForm({
-        schema: {
-          name: {
-            type: 'string',
-            title: 'Name',
-            required: true,
-          },
-          character: {
-            type: 'object',
-            title: 'Character',
-            properties: {
-              alc: {
-                type: 'number',
-                title: 'Alcohol',
-                required: true
-              },
-              ibu: {
-                type: 'number',
-                title: 'Bitterness',
-                required: true
-              }
-            }
-          },
-          malts: {
-            type: 'array',
-            items: {
+    <div class="container">
+      <h1>Brew a …</h1>
+      <div id="res" class="alert"></div>
+      <form></form>
+      <script type="text/javascript">
+        $('form').jsonForm({
+          schema: {
+            name: {
+              type: 'string',
+              title: 'Name',
+              required: true,
+            },
+            character: {
               type: 'object',
-              title: 'Malt',
+              title: 'Character',
               properties: {
-                name: {
-                  type: 'string',
-                  title: 'Name',
+                alc: {
+                  type: 'number',
+                  title: 'Alcohol',
                   required: true
                 },
-                amount: {
+                ibu: {
                   type: 'number',
-                  title: 'Amount',
+                  title: 'Bitterness',
                   required: true
                 }
               }
-            }
-          }
-        },
-        onSubmit: function(errors, values) {
-          if (errors) {
-            $('#res').html('<p>Again!</p>');
-          }
-          else {
-            $.ajax({
-              url: "{{ url_for(request.endpoint) }}",
-              data: JSON.stringify(values),
-              dataType: "json",
-              contentType: "application/json; charset=utf-8",
-              type: "POST",
-              success: function(response) {
-                window.location.href = "{{ url_for('index') }}";
+            },
+            malts: {
+              type: 'array',
+              items: {
+                type: 'object',
+                title: 'Malt',
+                properties: {
+                  name: {
+                    type: 'string',
+                    title: 'Name',
+                    required: true
+                  },
+                  amount: {
+                    type: 'number',
+                    title: 'Amount',
+                    required: true
+                  }
+                }
               }
-            });
+            }
+          },
+          onSubmit: function(errors, values) {
+            if (errors) {
+              $('#res').html('<p>Again!</p>');
+            }
+            else {
+              $.ajax({
+                url: "{{ url_for(request.endpoint) }}",
+                data: JSON.stringify(values),
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                type: "POST",
+                success: function(response) {
+                  window.location.href = "{{ url_for('index') }}";
+                }
+              });
+            }
+            return false;
           }
-          return false;
-        }
-      });
-    </script>
+        });
+      </script>
+    </div>
   </body>
 </html>
