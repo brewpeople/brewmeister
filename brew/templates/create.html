@@ -12,13 +12,13 @@
     <div class="container">
       <h1>Brew a …</h1>
       <div id="res" class="alert"></div>
-      <form></form>
+      <form class="form-horizontal"></form>
       <script type="text/javascript">
         $('form').jsonForm({
           schema: {
             name: {
               type: 'string',
-              title: 'Name',
+              title: 'Recipe name',
               required: true,
             },
             character: {
@@ -32,17 +32,17 @@
                 },
                 alc: {
                   type: 'number',
-                  title: 'Alcohol',
+                  title: 'Alcohol (% vol.)',
                   required: true
                 },
                 ebc: {
                   type: 'number',
-                  title: 'Color',
+                  title: 'Color (EBC)',
                   required: true
                 },
                 ibu: {
                   type: 'number',
-                  title: 'Bitterness',
+                  title: 'Bitterness (IBU)',
                   required: true
                 }
               }
@@ -55,12 +55,12 @@
                 properties: {
                   name: {
                     type: 'string',
-                    title: 'Name',
+                    title: 'Malt type',
                     required: true
                   },
                   percentage: {
                     type: 'number',
-                    title: 'Percentage',
+                    title: 'Percentage (%)',
                     required: true
                   }
                 }
@@ -79,12 +79,12 @@
                   },
                   time: {
                     type: 'number',
-                    title: 'Time',
+                    title: 'Time (min)',
                     required: true
                   },
                   temperature: {
                     type: 'number',
-                    title: 'Temperature',
+                    title: 'Temperature (°C)',
                     required: true
                   }
                 }
