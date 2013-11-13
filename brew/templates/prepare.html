@@ -1,8 +1,13 @@
 <!doctype html>
-<head>
-  <title>Brew-a-Beer</title>
-</head>
-<body>
-  <h1>Prepare</h1>
-  {{ recipe.name }}
-</body>
+<html>
+  <head>
+    <title>Brew-a-Beer</title>
+    <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Prepare</h1>
+      {{ recipe.name }}
+    </div>
+  </body>
+</html>

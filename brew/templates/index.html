@@ -1,12 +1,17 @@
 <!doctype html>
-<head>
+<html>
+  <head>
+    <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
   <title>Brew-a-Beer</title>
-</head>
-<body>
-  <h1>Brew a …</h1>
-  {% for recipe in recipes %}
-  <a href="/prepare/{{ recipe.id }}">{{ recipe.name }}</a>
-  {% endfor %}
+  </head>
+  <body>
+    <div class="container">
+      <h1>Brew a …</h1>
+      {% for recipe in recipes %}
+      <a href="/prepare/{{ recipe.id }}">{{ recipe.name }}</a>
+      {% endfor %}
 
-  or create a <a href="/recipe/create">new</a> recipe.
-</body>
+      or create a <a href="/recipe/create">new</a> recipe.
+    </div>
+  </body>
+</html>
