@@ -25,9 +25,19 @@
               type: 'object',
               title: 'Character',
               properties: {
+                gravity: {
+                  type: 'number',
+                  title: 'Gravity',
+                  required: true
+                },
                 alc: {
                   type: 'number',
                   title: 'Alcohol',
+                  required: true
+                },
+                ebc: {
+                  type: 'number',
+                  title: 'Color',
                   required: true
                 },
                 ibu: {
@@ -48,9 +58,33 @@
                     title: 'Name',
                     required: true
                   },
-                  amount: {
+                  percentage: {
                     type: 'number',
-                    title: 'Amount',
+                    title: 'Percentage',
+                    required: true
+                  }
+                }
+              }
+            },
+            mash: {
+              type: 'array',
+              items: {
+                type: 'object',
+                title: 'Mash step',
+                properties: {
+                  name: {
+                    type: 'string',
+                    title: 'Name',
+                    required: true
+                  },
+                  time: {
+                    type: 'number',
+                    title: 'Time',
+                    required: true
+                  },
+                  temperature: {
+                    type: 'number',
+                    title: 'Temperature',
                     required: true
                   }
                 }
