@@ -8,7 +8,7 @@
     <div class="container">
       <h1>Brew a …</h1>
       {% for recipe in recipes %}
-      <a href="/prepare/{{ recipe._id }}">{{ recipe.name }}</a>
+      <a href="/brews/prepare/{{ recipe._id }}">{{ recipe.name }}</a>
       {% endfor %}
 
       or create a <a href="{{ url_for('recipes') }}">new</a> recipe.

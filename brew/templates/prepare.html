@@ -33,7 +33,10 @@
 
       <h2>{{ recipe.name }}</h2>
 
-      <form action="/brew/{{ recipe._id }}" method="POST">
+      <form action="/brews" method="POST">
+        <fieldset>
+          <input name="recipe_id" type="hidden" value="{{ recipe._id }}">
+        </fieldset>
         <fieldset>
           <label>Amount</label>
           <input name="amount" data-bind="value: amountLiter, valueUpdate:'afterkeydown'" type="text" placeholder="20"> Liter
