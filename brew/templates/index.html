@@ -1,9 +1,17 @@
 {% extends "layout.html" %}
 {% block body %}
-  <h1>Brew a …</h1>
-  {% for recipe in recipes %}
-  <a href="/brews/prepare/{{ recipe._id }}">{{ recipe.name }}</a>
-  {% endfor %}
+  {% if machine.in_progress() %}
+    <h1>We are brewing</h1>
+      <p>We are {{ machine.fsm.current }}. <a href="/brews/1">Take</a> a closer
+      look or <a href="/brews/stop">stop</a> immediately.</p>
+  {% else %}
+    <h1>Brew a …</h1>
+      <ul>
+        {% for recipe in recipes %}
+        <li><a href="/brews/prepare/{{ recipe._id }}">{{ recipe.name }}</a></li>
+        {% endfor %}
+      </ul>
 
-  or create a <a href="{{ url_for('recipes') }}">new</a> recipe.
+    or create a <a href="{{ url_for('recipes') }}">new</a> recipe.
+  {% endif %}
 {% endblock %}
