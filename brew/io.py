@@ -8,7 +8,14 @@ class TemperatureController(object):
         if 'CONTROLLER_TYPE' in app.config:
             controller_type = app.config['CONTROLLER_TYPE']
 
-        if controller_type == 'dummy':
+        if controller_type == 'arduino':
+            filename = '/dev/ttyUSB0'
+
+            if 'CONTROLLER_ARDUINO_DEVICE' in app.config:
+                filename = app.config['CONTROLLER_ARDUINO_DEVICE']
+
+            self._real_controller = ArduinoController(filename)
+        elif controller_type == 'dummy':
             slope = 2.0
 
             if 'CONTROLLER_DUMMY_SLOPE' in app.config:
@@ -21,6 +28,19 @@ class TemperatureController(object):
 
     def set_temperature(self, temperature):
         self._real_controller.set_temperature(temperature)
+
+
+class ArduinoController(TemperatureController):
+    def __init__(self, filename):
+        self._filename = filename
+
+    def get_temperature(self):
+        with open(self._filename, 'r') as f:
+            return f.read()
+
+    def set_temperature(self, temperature):
+        with open(self._filename, 'w') as f:
+            f.write(str(temperature))
 
 
 class DummyController(TemperatureController):
