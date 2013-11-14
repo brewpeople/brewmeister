@@ -1,65 +1,58 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Brew-a-Beer</title>
-    <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery/jquery-1.10.2.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/knockout/knockout-3.0.0.js') }}"></script>
-    <script type="text/javascript">
-      $(document).ready(function() {
-        function AmountModel() {
-          this.amountLiter = ko.observable("20");
+{% extends "layout.html" %}
+{% block body %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery/jquery-1.10.2.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/knockout/knockout-3.0.0.js') }}"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    function AmountModel() {
+      this.amountLiter = ko.observable("20");
 
-          this.totalMass = ko.computed(function() {
-            var density = 261.1 / (261.53 - {{ recipe.characteristics.gravity }});
-            return parseFloat(this.amountLiter()) * density * {{ recipe.characteristics.gravity }} / 65.0;
-          }, this);
+      this.totalMass = ko.computed(function() {
+        var density = 261.1 / (261.53 - {{ recipe.characteristics.gravity }});
+        return parseFloat(this.amountLiter()) * density * {{ recipe.characteristics.gravity }} / 65.0;
+      }, this);
 
-          {% for malt in recipe.malts %}
-          this.{{ malt.name|replace(' ', '') }}Amount = ko.computed(function() {
-            var mass = parseFloat(this.totalMass()) * {{ malt.percentage }} / 100.0;
-            return Math.round(mass * 100) / 100;
-          }, this);
-          {% endfor %}
-        }
+      {% for malt in recipe.malts %}
+      this.{{ malt.name|replace(' ', '') }}Amount = ko.computed(function() {
+        var mass = parseFloat(this.totalMass()) * {{ malt.percentage }} / 100.0;
+        return Math.round(mass * 100) / 100;
+      }, this);
+      {% endfor %}
+    }
 
-        ko.applyBindings(new AmountModel());
-      });
-    </script>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Prepare</h1>
+    ko.applyBindings(new AmountModel());
+  });
+</script>
 
-      <h2>{{ recipe.name }}</h2>
+<h1>Prepare</h1>
 
-      <form action="/brews" method="POST">
-        <fieldset>
-          <input name="recipe_id" type="hidden" value="{{ recipe._id }}">
-        </fieldset>
-        <fieldset>
-          <label>Amount</label>
-          <input name="amount" data-bind="value: amountLiter, valueUpdate:'afterkeydown'" type="text" placeholder="20"> Liter
-        </fieldset>
+<h2>{{ recipe.name }}</h2>
 
-        <table class="table table-striped table-hover">
-          <tr>
-            <th>Malt</th>
-            <th>Amount</th>
-            <th>Percentage</th>
-          </tr>
+<form action="/brews" method="POST">
+  <fieldset>
+    <input name="recipe_id" type="hidden" value="{{ recipe._id }}">
+  </fieldset>
+  <fieldset>
+    <label>Amount</label>
+    <input name="amount" data-bind="value: amountLiter, valueUpdate:'afterkeydown'" type="text" placeholder="20"> Liter
+  </fieldset>
 
-        {% for malt in recipe.malts %}
-          <tr>
-            <td>{{ malt.name }}</td>
-            <td><span data-bind="text: {{ malt.name|replace(' ', '') }}Amount"></span> kg</td>
-            <td>{{ malt.percentage }} %</td>
-          </tr>
-        {% endfor %}
-        </table>
+  <table class="table table-striped table-hover">
+    <tr>
+      <th>Malt</th>
+      <th>Amount</th>
+      <th>Percentage</th>
+    </tr>
 
-        <button type="submit" class="btn">Brew</button>
-      </form>
-    </div>
-  </body>
-</html>
+  {% for malt in recipe.malts %}
+    <tr>
+      <td>{{ malt.name }}</td>
+      <td><span data-bind="text: {{ malt.name|replace(' ', '') }}Amount"></span> kg</td>
+      <td>{{ malt.percentage }} %</td>
+    </tr>
+  {% endfor %}
+  </table>
+
+  <button type="submit" class="btn">Brew</button>
+</form>
+{% endblock %}

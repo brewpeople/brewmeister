@@ -1,116 +1,110 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Brew-a-Beer</title>
-    <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery/jquery-1.10.2.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery/jquery-ui-1.10.3.custom.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/underscore/underscore-min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='js/jsonform/jsonform.js') }}"></script>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Brew a …</h1>
-      <div id="res" class="alert"></div>
-      <form class="form-horizontal"></form>
-      <script type="text/javascript">
-        $('form').jsonForm({
-          schema: {
+{% extends "layout.html" %}
+{% block body %}
+<h1>Create a new recipe</h1>
+<div id="res" class="alert"></div>
+<form class="form-horizontal"></form>
+
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery/jquery-1.10.2.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery/jquery-ui-1.10.3.custom.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/underscore/underscore-min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/jsonform/jsonform.js') }}"></script>
+
+<script type="text/javascript">
+  $('form').jsonForm({
+    schema: {
+      name: {
+        type: 'string',
+        title: 'Recipe name',
+        required: true,
+      },
+      character: {
+        type: 'object',
+        title: 'Character',
+        properties: {
+          gravity: {
+            type: 'number',
+            title: 'Gravity',
+            required: true
+          },
+          alc: {
+            type: 'number',
+            title: 'Alcohol (% vol.)',
+            required: true
+          },
+          ebc: {
+            type: 'number',
+            title: 'Color (EBC)',
+            required: true
+          },
+          ibu: {
+            type: 'number',
+            title: 'Bitterness (IBU)',
+            required: true
+          }
+        }
+      },
+      malts: {
+        type: 'array',
+        items: {
+          type: 'object',
+          title: 'Malt',
+          properties: {
             name: {
               type: 'string',
-              title: 'Recipe name',
-              required: true,
+              title: 'Malt type',
+              required: true
             },
-            character: {
-              type: 'object',
-              title: 'Character',
-              properties: {
-                gravity: {
-                  type: 'number',
-                  title: 'Gravity',
-                  required: true
-                },
-                alc: {
-                  type: 'number',
-                  title: 'Alcohol (% vol.)',
-                  required: true
-                },
-                ebc: {
-                  type: 'number',
-                  title: 'Color (EBC)',
-                  required: true
-                },
-                ibu: {
-                  type: 'number',
-                  title: 'Bitterness (IBU)',
-                  required: true
-                }
-              }
+            percentage: {
+              type: 'number',
+              title: 'Percentage (%)',
+              required: true
+            }
+          }
+        }
+      },
+      mash: {
+        type: 'array',
+        items: {
+          type: 'object',
+          title: 'Mash step',
+          properties: {
+            name: {
+              type: 'string',
+              title: 'Name',
+              required: true
             },
-            malts: {
-              type: 'array',
-              items: {
-                type: 'object',
-                title: 'Malt',
-                properties: {
-                  name: {
-                    type: 'string',
-                    title: 'Malt type',
-                    required: true
-                  },
-                  percentage: {
-                    type: 'number',
-                    title: 'Percentage (%)',
-                    required: true
-                  }
-                }
-              }
+            time: {
+              type: 'number',
+              title: 'Time (min)',
+              required: true
             },
-            mash: {
-              type: 'array',
-              items: {
-                type: 'object',
-                title: 'Mash step',
-                properties: {
-                  name: {
-                    type: 'string',
-                    title: 'Name',
-                    required: true
-                  },
-                  time: {
-                    type: 'number',
-                    title: 'Time (min)',
-                    required: true
-                  },
-                  temperature: {
-                    type: 'number',
-                    title: 'Temperature (°C)',
-                    required: true
-                  }
-                }
-              }
+            temperature: {
+              type: 'number',
+              title: 'Temperature (°C)',
+              required: true
             }
-          },
-          onSubmit: function(errors, values) {
-            if (errors) {
-              $('#res').html('<p>Again!</p>');
-            }
-            else {
-              $.ajax({
-                url: "{{ url_for(request.endpoint) }}",
-                data: JSON.stringify(values),
-                dataType: "json",
-                contentType: "application/json; charset=utf-8",
-                type: "POST",
-                success: function(response) {
-                  window.location.href = "{{ url_for('index') }}";
-                }
-              });
-            }
-            return false;
+          }
+        }
+      }
+    },
+    onSubmit: function(errors, values) {
+      if (errors) {
+        $('#res').html('<p>Again!</p>');
+      }
+      else {
+        $.ajax({
+          url: "{{ url_for(request.endpoint) }}",
+          data: JSON.stringify(values),
+          dataType: "json",
+          contentType: "application/json; charset=utf-8",
+          type: "POST",
+          success: function(response) {
+            window.location.href = "{{ url_for('index') }}";
           }
         });
-      </script>
-    </div>
-  </body>
-</html>
+      }
+      return false;
+    }
+  });
+</script>
+{% endblock %}

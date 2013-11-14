@@ -1,17 +1,9 @@
-<!doctype html>
-<html>
-  <head>
-    <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
-  <title>Brew-a-Beer</title>
-  </head>
-  <body>
-    <div class="container">
-      <h1>Brew a …</h1>
-      {% for recipe in recipes %}
-      <a href="/brews/prepare/{{ recipe._id }}">{{ recipe.name }}</a>
-      {% endfor %}
+{% extends "layout.html" %}
+{% block body %}
+  <h1>Brew a …</h1>
+  {% for recipe in recipes %}
+  <a href="/brews/prepare/{{ recipe._id }}">{{ recipe.name }}</a>
+  {% endfor %}
 
-      or create a <a href="{{ url_for('recipes') }}">new</a> recipe.
-    </div>
-  </body>
-</html>
+  or create a <a href="{{ url_for('recipes') }}">new</a> recipe.
+{% endblock %}
