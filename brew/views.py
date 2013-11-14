@@ -1,6 +1,6 @@
-from flask import request, render_template
+from flask import request, render_template, jsonify
 from bson.objectid import ObjectId
-from brew import app, mongo
+from brew import app, mongo, controller
 
 
 @app.route('/')
@@ -28,3 +28,12 @@ def brew():
     recipe_id = request.form['recipe_id']
     recipe = mongo.db.recipes.find_one(ObjectId(recipe_id))
     return "Brew a {} with {} L".format(recipe['name'], request.form['amount'])
+
+
+@app.route('/status/temperature', methods=['GET', 'POST'])
+def temperature():
+    if request.method == 'POST':
+        temperature = float(request.get_json()['temperature'])
+        controller.set_temperature(temperature)
+        return "Success"
+    return jsonify(temperature=controller.get_temperature())
