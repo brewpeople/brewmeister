@@ -1,4 +1,5 @@
 import datetime
+import random
 
 
 class TemperatureController(object):
@@ -62,6 +63,9 @@ class DummyController(TemperatureController):
             return self._last_temperature
 
         increase = elapsed * self._slope
+
+        # add some noise
+        increase += random.gauss(0.5, 0.1)
 
         # Okay, this is the worst controller *ever*
         if self._last_temperature > self._set_temperature:

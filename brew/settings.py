@@ -1,2 +1,4 @@
 DEBUG = True
 SECRET_KEY = 'some_key'
+
+CONTROLLER_DUMMY_SLOPE = 5.0
