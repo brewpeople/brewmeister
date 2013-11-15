@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block body %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery/jquery-1.10.2.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/flot/jquery.flot.min.js') }}"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    var temperatures = [];
+    var opts = { series: { shadowSize: 0 },
+                 yaxis: { min: 0, max: 80 },
+                 xaxis: { show: true } };
+    var plot = $.plot($("#temperature-chart"), [ temperatures ], opts);
+    var x = 0; 
+
+    function update() {
+      $.getJSON('/status/temperature', function (data) {
+        temperatures.push([x, data.temperature]);
+        plot.setData([ temperatures ]);
+
+        plot.setupGrid();
+        plot.draw();
+        setTimeout(update, 4000);
+        x += 1;
+      });
+    }
+    
+    update();
+  });
+</script>
+  <h2>2. Mash</h2>
+
+  <table class="table table-striped table-hover">
+    <tr>
+      <th>Step</th>
+      <th>Time (min)</th>
+      <th>Temperature (°C)</th>
+      <th>Status</th>
+    </tr>
+
+  {% for step in mash %}
+    {% if step.state == "pending" %}
+    <tr class="warning">
+    {% else %}
+    <tr>
+    {% endif %}
+      <td>{{ step.name }}</td>
+      <td>{{ step.time }}</td>
+      <td>{{ step.temperature }}</td>
+      <td>{{ machine.current}}</td>
+    </tr>
+  {% endfor %}
+  </table>
+
+  <div id="temperature-chart" style="width: 600px; height: 450px">
+    <div class="flot-y-axis flot-y1-axis">
+      <div class="flot-tick-label">Temperature °C</div>
+    </div>
+  </div>
+
+{% endblock %}

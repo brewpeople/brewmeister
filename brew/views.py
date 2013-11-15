@@ -27,8 +27,19 @@ def prepare(recipe_id):
 def brew():
     recipe_id = request.form['recipe_id']
     recipe = mongo.db.recipes.find_one(ObjectId(recipe_id))
-    machine.fsm.heat(temperature=25)
-    return "Brew a {} with {} L".format(recipe['name'], request.form['amount'])
+
+    mash = []
+
+    for step in recipe['mash']:
+        mash.append(dict(name=step['name'],
+                         time=step['time'],
+                         temperature=step['temperature'],
+                         state='waiting'))
+
+    mash[0]['state'] = 'pending'
+
+    machine.fsm.heat(temperature=mash[0]['temperature'])
+    return render_template('brew.html', mash=mash, machine=machine)
 
 
 @app.route('/brews/stop')
