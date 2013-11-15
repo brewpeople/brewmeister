@@ -23,22 +23,24 @@ def prepare(recipe_id):
     return render_template('prepare.html', recipe=recipe)
 
 
-@app.route('/brews', methods=['POST'])
+@app.route('/brews', methods=['GET', 'POST'])
 def brew():
-    recipe_id = request.form['recipe_id']
-    recipe = mongo.db.recipes.find_one(ObjectId(recipe_id))
+    if request.method == 'POST':
+        recipe_id = request.form['recipe_id']
+        recipe = mongo.db.recipes.find_one(ObjectId(recipe_id))
 
-    mash = []
+        mash = []
 
-    for step in recipe['mash']:
-        mash.append(dict(name=step['name'],
-                         time=step['time'],
-                         temperature=step['temperature'],
-                         state='waiting'))
+        for step in recipe['mash']:
+            mash.append(dict(name=step['name'],
+                             time=step['time'],
+                             temperature=step['temperature'],
+                             state='waiting'))
 
-    mash[0]['state'] = 'pending'
+        mash[0]['state'] = 'pending'
 
-    machine.fsm.heat(temperature=mash[0]['temperature'])
+        machine.fsm.heat(temperature=mash[0]['temperature'])
+
     return render_template('brew.html', mash=mash, machine=machine)
 
 
