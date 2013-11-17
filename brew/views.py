@@ -6,6 +6,9 @@ from bson.objectid import ObjectId
 from brew import app, mongo, controller, machine
 
 
+current_brew = None
+
+
 def create_brew(recipe_id, brewers):
     recipe = mongo.db.recipes.find_one(ObjectId(recipe_id))
     mash = []
@@ -17,7 +20,13 @@ def create_brew(recipe_id, brewers):
                          state='waiting'))
         mash[0]['state'] = 'pending'
 
-    return dict(recipe_id=recipe_id, mash=mash, brewers=brewers)
+    brew = dict(recipe_id=recipe_id, mash=mash, brewers=brewers)
+    mongo.db.brews.insert(brew)
+    return brew
+
+
+def get_current_brew():
+    return mongo.db.brews.find_one({"current": True})
 
 
 def prepare_machine(mash):
@@ -54,20 +63,21 @@ def prepare(recipe_id):
 @app.route('/brews', methods=['GET', 'POST'])
 def brew():
     if request.method == 'POST':
+        global current_brew
+
         recipe_id = request.form['recipe_id']
-        brew = create_brew(recipe_id, [u"Michael Jackson"])
-        prepare_machine(brew['mash'])
+        current_brew = create_brew(recipe_id, [u"Michael Jackson"])
+
+        prepare_machine(current_brew['mash'])
         machine.start()
 
-    return render_template('brew.html', brew=brew, machine=machine)
+    return render_template('brew.html', brew=current_brew, machine=machine)
 
 
 @app.route('/brews/stop', methods=['POST'])
 def stop_brew():
     machine.stop()
     controller.set_temperature(20.0)
-    return "okay"
-    # return redirect('/')
 
 
 @app.route('/status/temperature', methods=['GET'])
