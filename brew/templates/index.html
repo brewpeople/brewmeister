@@ -2,7 +2,7 @@
 {% block body %}
   {% if machine.in_progress() %}
     <h1>We are brewing</h1>
-      <p>We are {{ machine.fsm.current }}. <a href="/brews/1">Take</a> a closer
+      <p>Brew process in progress. <a href="/brews/1">Take</a> a closer
       look or <a href="/brews/stop">stop</a> immediately.</p>
   {% else %}
     <h1>Brew a …</h1>
