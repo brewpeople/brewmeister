@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-11-17 18:19+0100\n"
+"POT-Creation-Date: 2013-11-17 18:58+0100\n"
 "PO-Revision-Date: 2013-11-17 16:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -63,6 +63,18 @@ msgstr ""
 #: brew/templates/create.html:5
 msgid "Create a new recipe"
 msgstr "Neues Rezept anlegen"
+
+#: brew/templates/details.html:4
+msgid "Brew details"
+msgstr "Suddetails"
+
+#: brew/templates/details.html:9
+msgid "When"
+msgstr "Wann"
+
+#: brew/templates/details.html:12
+msgid "Who"
+msgstr "Wer"
 
 #: brew/templates/index.html:10
 msgid "Choose a recipe"

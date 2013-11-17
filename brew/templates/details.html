@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block body %}
+
+<h2>{% trans %}Brew details{% endtrans %}</h2>
+
+<div class="row">
+  <div class="span12">
+    <dl>
+      <dt>{% trans %}When{% endtrans %}</dt>
+      <dd>{{ brew.date | dateformat }}</dd>
+
+      <dt>{% trans %}Who{% endtrans %}</dt>
+      <dd>{{ brew.brewers | join(', ') }}</dd>
+    </dl>
+  </div>
+</div>
+
+{% endblock %}

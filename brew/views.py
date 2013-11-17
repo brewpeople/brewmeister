@@ -11,6 +11,14 @@ from brew import app, babel, controller, machine, mongo
 
 current_brew = None
 
+class JSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, ObjectId):
+            return str(o)
+
+        return json.JSONEncoder.default(self, o)
+
+
 @babel.localeselector
 def get_locale():
     return request.accept_languages.best_match(['en', 'de'])
@@ -66,12 +74,6 @@ def recipes():
     return render_template('create.html', schema=schema)
 
 
-@app.route('/brews/prepare/<recipe_id>', methods=['GET'])
-def prepare(recipe_id):
-    recipe = mongo.db.recipes.find_one(ObjectId(recipe_id))
-    return render_template('prepare.html', recipe=recipe)
-
-
 @app.route('/brews', methods=['GET', 'POST'])
 def brew():
     if request.method == 'POST':
@@ -87,6 +89,19 @@ def brew():
         machine.start()
 
     return render_template('brew.html', brew=current_brew, machine=machine)
+
+
+@app.route('/brews/<brew_id>', methods=['GET'])
+def get_brew(brew_id):
+    brew = mongo.db.brews.find_one(ObjectId(brew_id))
+    print(brew)
+    return render_template('details.html', brew=brew)
+
+
+@app.route('/brews/prepare/<recipe_id>', methods=['GET'])
+def prepare(recipe_id):
+    recipe = mongo.db.recipes.find_one(ObjectId(recipe_id))
+    return render_template('prepare.html', recipe=recipe)
 
 
 @app.route('/brews/stop', methods=['POST'])
