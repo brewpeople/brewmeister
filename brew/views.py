@@ -19,8 +19,7 @@ def create_brew(recipe_id, brewers):
                          name=step['name'],
                          time=step['time'],
                          temperature=step['temperature'],
-                         state='waiting'))
-        mash[0]['state'] = 'pending'
+                         state=''))
 
     brew = dict(recipe_id=recipe_id, mash=mash, brewers=brewers)
     mongo.db.brews.insert(brew)
@@ -78,6 +77,7 @@ def stop_brew():
     controller.set_temperature(20.0)
 
 
-@app.route('/status/temperature', methods=['GET'])
+@app.route('/status', methods=['GET'])
 def temperature():
-    return jsonify(temperature=controller.get_temperature())
+    return jsonify(step=machine.current_step,
+                   temperature=controller.get_temperature())

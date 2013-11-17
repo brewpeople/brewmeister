@@ -7,7 +7,6 @@ import logging
 log = logging.getLogger(__name__)
 
 
-
 class Machine(object):
     def __init__(self, controller, autopilot=True):
         state_table = {'initial': 'preparing',
@@ -23,6 +22,7 @@ class Machine(object):
         self._controller = controller
         self._thread = None
         self._exit_event = threading.Event()
+        self.current_step = None
 
     def in_progress(self):
         return self._fsm.current != 'preparing'
@@ -44,14 +44,20 @@ class Machine(object):
     def start(self):
         def run_in_background():
             for step in self._steps:
+                self.current_step = step
+
                 # Heat first
                 if not self._exit_event.is_set():
+                    step['state'] = 'Heating'
                     self._fsm.heat()
                     self.heat(step['temperature'])
 
                 # Rest some time
+                step['state'] = 'Resting'
                 self._fsm.rest()
                 self._exit_event.wait(step['time'] * 60)
+
+                step['state'] = 'Done'
 
             if not self._exit_event.is_set():
                 self._fsm.finish()

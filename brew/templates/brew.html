@@ -11,19 +11,35 @@
     var plot = $.plot($("#temperature-chart"), [ temperatures ], opts);
     var do_plot = true;
     var x = 0; 
+    var old_selector = "";
 
     function update() {
-      if (!do_plot)
-        return;
+      $.getJSON('/status', function (data) {
+        var row_selector = "#" + data.step.id;
 
-      $.getJSON('/status/temperature', function (data) {
-        temperatures.push([x, data.temperature]);
-        plot.setData([ temperatures ]);
+        if (old_selector != row_selector) {
+          if (old_selector != "") {
+            $(old_selector).removeClass("warning");
+            $(old_selector).addClass("success");
+            $(old_selector + " td:nth-child(4)").text("done");
+          }
 
-        plot.setupGrid();
-        plot.draw();
+          old_selector = row_selector;
+        }
+
+        $(row_selector).addClass("warning");
+        $(row_selector + " td:nth-child(4)").text(data.step.state);
+
+        if (do_plot) {
+          temperatures.push([x, data.temperature]);
+          plot.setData([ temperatures ]);
+
+          plot.setupGrid();
+          plot.draw();
+          x += 1;
+        }
+
         setTimeout(update, 2000);
-        x += 1;
       });
     }
 
