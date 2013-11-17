@@ -24,33 +24,38 @@
   });
 </script>
 
-<h2>1. Add malts</h2>
+<h2>Prepare brew</h2>
 
-<form action="/brews" method="POST">
-  <fieldset>
-    <input name="recipe_id" type="hidden" value="{{ recipe._id }}">
-  </fieldset>
-  <fieldset>
-    <label>Amount</label>
-    <input name="amount" data-bind="value: amountLiter, valueUpdate:'afterkeydown'" type="text" placeholder="20"> Liter
-  </fieldset>
+<div class="row">
+  <div class="span12">
+    <h3>Ingredients</h3>
 
-  <table class="table table-striped table-hover">
-    <tr>
-      <th>Malt</th>
-      <th>Amount</th>
-      <th>Percentage</th>
-    </tr>
+    <form action="/brews" method="POST">
+      <fieldset>
+        <input name="recipe_id" type="hidden" value="{{ recipe._id }}">
+      </fieldset>
+      <fieldset>
+        Estimated amount <input name="amount" data-bind="value: amountLiter, valueUpdate:'afterkeydown'" type="text" placeholder="20"> Liter
+      </fieldset>
 
-  {% for malt in recipe.malts %}
-    <tr>
-      <td>{{ malt.name }}</td>
-      <td><span data-bind="text: {{ malt.name|replace(' ', '') }}Amount"></span> kg</td>
-      <td>{{ malt.percentage }} %</td>
-    </tr>
-  {% endfor %}
-  </table>
+      <table class="table table-hover">
+        <tr>
+          <th>Malt</th>
+          <th>Amount</th>
+          <th>Percentage</th>
+        </tr>
+        {% for malt in recipe.malts %}
+          <tr>
+            <td>{{ malt.name }}</td>
+            <td><span data-bind="text: {{ malt.name|replace(' ', '') }}Amount"></span> kg</td>
+            <td>{{ malt.percentage }} %</td>
+          </tr>
+        {% endfor %}
+      </table>
 
-  <button type="submit" class="btn">Brew</button>
-</form>
+      <button type="submit" class="btn btn-primary btn-large"><i class="fa
+          fa-beer"></i> Brew</button>
+    </form>
+  </div>
+</div>
 {% endblock %}

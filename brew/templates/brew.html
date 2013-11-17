@@ -10,7 +10,7 @@
                  xaxis: { show: true } };
     var plot = $.plot($("#temperature-chart"), [ temperatures ], opts);
     var do_plot = true;
-    var x = 0; 
+    var x = 0;
     var old_selector = "";
 
     function update() {
@@ -55,37 +55,54 @@
     $("#panic-button").click(function() {
       $.post('/brews/stop');
     });
-    
+
     update();
   });
 </script>
-  <h2>2. Mash</h2>
+  <h2>Mashing</h2>
 
-  <table class="table table-striped table-hover">
-    <tr>
-      <th>Step</th>
-      <th>Time (min)</th>
-      <th>Temperature (°C)</th>
-      <th>Status</th>
-    </tr>
+  <div class="row">
+    <div class="span12">
+      <h3>Steps</h3>
 
-  {% for step in brew.mash %}
-    <tr id="{{ step.id }}">
-      <td>{{ step.name }}</td>
-      <td>{{ step.time }}</td>
-      <td>{{ step.temperature }}</td>
-      <td></td>
-    </tr>
-  {% endfor %}
-  </table>
+      <table class="table table-hover">
+        <tr>
+          <th>Step</th>
+          <th>Time (min)</th>
+          <th>Temperature (°C)</th>
+          <th>Status</th>
+        </tr>
 
-  <div id="temperature-chart" style="width: 600px; height: 450px">
-    <div class="flot-y-axis flot-y1-axis">
-      <div class="flot-tick-label">Temperature °C</div>
+      {% for step in brew.mash %}
+        <tr id="{{ step.id }}">
+          <td>{{ step.name }}</td>
+          <td>{{ step.time }}</td>
+          <td>{{ step.temperature }}</td>
+          <td></td>
+        </tr>
+      {% endfor %}
+      </table>
     </div>
   </div>
 
-  <input type="checkbox" id="update-temperature" checked> Update temperature
-  <button type="submit" class="btn" id="panic-button">Panic</button>
+  <h3>Temperature</h3>
+  <div class="row">
+    <div class="span8">
+      <div id="temperature-chart" style="width: 500px; height: 400px">
+        <div class="flot-y-axis flot-y1-axis">
+          <div class="flot-tick-label">Temperature °C</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="span4">
+      <p>
+        <input type="checkbox" id="update-temperature" checked> Update temperature
+      </p>
+
+        <p><button type="submit" class="btn btn-danger" id="panic-button"><i
+            class="fa fa-ban"></i> Stop</button> the process immediately.</p>
+    </div>
+  </div>
 
 {% endblock %}

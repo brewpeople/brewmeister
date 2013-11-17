@@ -60,6 +60,7 @@ class Machine(object):
                 step['state'] = 'done'
 
             if not self._exit_event.is_set():
+                self.current_step = None
                 self._fsm.finish()
 
         self._thread = threading.Thread(target=run_in_background)

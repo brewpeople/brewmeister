@@ -1,17 +1,23 @@
 {% extends "layout.html" %}
 {% block body %}
+<div class="row">
+  <div class="span12">
   {% if machine.in_progress() %}
-    <h1>We are brewing</h1>
+    <h2>We are brewing</h2>
       <p>Brew process in progress. <a href="/brews/1">Take</a> a closer
       look or <a href="/brews/stop">stop</a> immediately.</p>
   {% else %}
-    <h1>Brew a <i class="fa fa-beer"></i></h1>
+    <h2>Choose a recipe</h2>
+    <p>
       <ul>
         {% for recipe in recipes %}
         <li><a href="/brews/prepare/{{ recipe._id }}">{{ recipe.name }}</a></li>
         {% endfor %}
       </ul>
+    </p>
 
-    or create a <a href="{{ url_for('recipes') }}">new</a> recipe.
+    <p>… or create a <a href="{{ url_for('recipes') }}">new</a> one.</p>
   {% endif %}
+  </div>
+</div>
 {% endblock %}
