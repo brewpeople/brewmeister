@@ -2,15 +2,15 @@
 {% block body %}
 <script type="text/javascript" src="{{ url_for('static', filename='js/jquery/jquery-1.10.2.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/flot/jquery.flot.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/flot/jquery.flot.time.min.js') }}"></script>
 <script type="text/javascript">
   $(document).ready(function() {
     var temperatures = [];
     var opts = { series: { shadowSize: 0 },
                  yaxis: { min: 10, max: 80 },
-                 xaxis: { show: true } };
+                 xaxis: { mode: "time", timeformat: "%H:%M" } };
     var plot = $.plot($("#temperature-chart"), [ temperatures ], opts);
     var do_plot = true;
-    var x = 0;
     var old_selector = "";
 
     function update() {
@@ -35,12 +35,11 @@
           $(row_selector + " td:nth-child(4)").html("<i class='fa fa-clock-o'></i>");
 
         if (do_plot) {
-          temperatures.push([x, data.temperature]);
+          temperatures.push([data.timestamp, data.temperature]);
           plot.setData([ temperatures ]);
 
           plot.setupGrid();
           plot.draw();
-          x += 1;
         }
 
         setTimeout(update, 2000);

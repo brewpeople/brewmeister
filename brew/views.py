@@ -1,6 +1,7 @@
 import json
 import jsonschema
 import uuid
+import time
 import datetime
 from pkg_resources import resource_string
 from flask import request, render_template, jsonify, redirect, url_for
@@ -121,6 +122,7 @@ def stop_brew():
 
 
 @app.route('/status', methods=['GET'])
-def temperature():
-    return jsonify(step=machine.current_step,
+def status():
+    return jsonify(timestamp=int(time.time() * 1000),
+                   step=machine.current_step,
                    temperature=controller.get_temperature())
