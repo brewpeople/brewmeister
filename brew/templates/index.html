@@ -1,23 +1,40 @@
 {% extends "layout.html" %}
 {% block body %}
-<div class="row">
-  <div class="span12">
   {% if machine.in_progress() %}
     <h2>We are brewing</h2>
       <p>Brew process in progress. <a href="/brews/1">Take</a> a closer
       look or <a href="/brews/stop">stop</a> immediately.</p>
   {% else %}
-  <h2>{% trans %}Choose a recipe{% endtrans %}</h2>
-    <p>
-      <ul>
-        {% for recipe in recipes %}
-        <li><a href="/brews/prepare/{{ recipe._id }}">{{ recipe.name }}</a></li>
-        {% endfor %}
-      </ul>
-    </p>
+  <div class="row">
+    <div class="span12">
+      <h2>{% trans %}Choose a recipe{% endtrans %}</h2>
+      <p>
+        <ul>
+          {% for recipe in recipes %}
+          <li><a href="/brews/prepare/{{ recipe._id }}">{{ recipe.name }}</a></li>
+          {% endfor %}
+        </ul>
+      </p>
 
-    <p>… or create a <a href="{{ url_for('recipes') }}">new</a> one.</p>
-  {% endif %}
+      <p>{% trans %}Create a <a href="/recipes">new</a> recipe.{% endtrans %}</p>
+    </div>
   </div>
-</div>
+  <div class="row">
+    <div class="span12">
+      <h2>{% trans %}Past brews{% endtrans %}</h2>
+      <table class="table table-hover">
+        <tr>
+          <th>{% trans %}Date{% endtrans %}</th>
+          <th>{% trans %}Beer{% endtrans %}</th>
+        </tr>
+        {% for brew in brews %}
+        <tr>
+          <td>{{ brew.date | datetime }}</td>
+          <td><a href="/brews/{{ brew._id }}">{{ brew.recipe }}</a></td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+  {% endif %}
 {% endblock %}

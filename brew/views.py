@@ -1,8 +1,10 @@
 import json
 import jsonschema
 import uuid
+import datetime
 from pkg_resources import resource_string
 from flask import request, render_template, jsonify, redirect, url_for
+from flask.ext.babel import format_datetime
 from bson.objectid import ObjectId
 from brew import app, babel, controller, machine, mongo
 
@@ -12,6 +14,12 @@ current_brew = None
 @babel.localeselector
 def get_locale():
     return request.accept_languages.best_match(['en', 'de'])
+
+
+@app.template_filter('datetime')
+def datetime_filter(value):
+    fmt = "EE, dd.MM.y"
+    return format_datetime(value, fmt)
 
 
 def create_brew(recipe_id, brewers):
@@ -25,7 +33,10 @@ def create_brew(recipe_id, brewers):
                          temperature=step['temperature'],
                          state=''))
 
-    brew = dict(recipe_id=recipe_id, mash=mash, brewers=brewers)
+    brew = dict(recipe=recipe['name'], recipe_id=recipe_id,
+                mash=mash, date=datetime.datetime.now(),
+                brewers=brewers)
+
     mongo.db.brews.insert(brew)
     return brew
 
@@ -37,7 +48,9 @@ def get_current_brew():
 @app.route('/')
 def index():
     recipes = mongo.db.recipes.find()
-    return render_template('index.html', recipes=recipes, machine=machine)
+    brews = mongo.db.brews.find()
+    return render_template('index.html', recipes=recipes, machine=machine,
+                           brews=brews)
 
 
 @app.route('/recipes', methods=['GET', 'POST'])
