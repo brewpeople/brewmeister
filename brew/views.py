@@ -70,6 +70,7 @@ def recipes():
         schema_dict = json.loads(schema)
         jsonschema.validate(schema_dict, recipe_json)
         mongo.db.recipes.insert(recipe_json)
+        return redirect(url_for('index'))
 
     return render_template('create.html', schema=schema)
 
@@ -94,8 +95,13 @@ def brew():
 @app.route('/brews/<brew_id>', methods=['GET'])
 def get_brew(brew_id):
     brew = mongo.db.brews.find_one(ObjectId(brew_id))
-    print(brew)
     return render_template('details.html', brew=brew)
+
+
+@app.route('/brews/delete/<brew_id>', methods=['GET'])
+def delete_brew(brew_id):
+    mongo.db.brews.remove(ObjectId(brew_id))
+    return redirect(url_for('index'))
 
 
 @app.route('/brews/prepare/<recipe_id>', methods=['GET'])
