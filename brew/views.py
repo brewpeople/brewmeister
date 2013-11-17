@@ -1,3 +1,5 @@
+import json
+import jsonschema
 from pkg_resources import resource_string
 from flask import request, render_template, jsonify, redirect
 from bson.objectid import ObjectId
@@ -12,12 +14,15 @@ def index():
 
 @app.route('/recipes', methods=['GET', 'POST'])
 def recipes():
-    if request.method == 'POST':
-        mongo.db.recipes.insert(request.get_json())
+    schema_text = resource_string(__name__, 'data/recipe.schema.json').decode('utf-8')
 
-    schema = resource_string(__name__, 'data/recipe.schema.json').decode('utf-8')
-    print schema
-    return render_template('create.html', schema=schema)
+    if request.method == 'POST':
+        recipe_json = request.get_json()
+        schema = json.loads(schema_text)
+        jsonschema.validate(schema, recipe_json)
+        mongo.db.recipes.insert(recipe_json)
+
+    return render_template('create.html', schema=schema_text)
 
 
 @app.route('/brews/prepare/<recipe_id>', methods=['GET'])
