@@ -1,5 +1,6 @@
 Flask
 Flask-Script
 Flask-PyMongo
+Flask-Babel
 fysom
 jsonschema

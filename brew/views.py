@@ -4,10 +4,14 @@ import uuid
 from pkg_resources import resource_string
 from flask import request, render_template, jsonify, redirect
 from bson.objectid import ObjectId
-from brew import app, mongo, controller, machine
+from brew import app, babel, controller, machine, mongo
 
 
 current_brew = None
+
+@babel.localeselector
+def get_locale():
+    return request.accept_languages.best_match(['en', 'de'])
 
 
 def create_brew(recipe_id, brewers):

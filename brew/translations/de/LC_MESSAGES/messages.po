@@ -1,0 +1,92 @@
+# German translations for PROJECT.
+# Copyright (C) 2013 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2013-11-17 16:28+0100\n"
+"PO-Revision-Date: 2013-11-17 16:02+0100\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: de <LL@li.org>\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 1.3\n"
+
+#: brew/templates/brew.html:62
+msgid "Mashing"
+msgstr "Maischen"
+
+#: brew/templates/brew.html:66
+msgid "Steps"
+msgstr "Schritte"
+
+#: brew/templates/brew.html:70
+msgid "Step"
+msgstr "Schritt"
+
+#: brew/templates/brew.html:71
+msgid "Time (min)"
+msgstr "Zeit (min)"
+
+#: brew/templates/brew.html:72
+msgid "Temperature (°C)"
+msgstr "Temperatur (°C)"
+
+#: brew/templates/brew.html:73
+msgid "Status"
+msgstr "Status"
+
+#: brew/templates/brew.html:88
+msgid "Temperature"
+msgstr "Temperatur"
+
+#: brew/templates/brew.html:100
+msgid "Update temperature"
+msgstr "Temperatur aktualisieren"
+
+#: brew/templates/brew.html:103
+msgid ""
+"<button type=\"submit\" class=\"btn btn-danger\" id=\"panic-button\"><i\n"
+"            class=\"fa fa-ban\"></i> Stop</button> the process "
+"immediately."
+msgstr "Prozess sofort <button type=\"submit\" class=\"btn btn-danger\" id=\"panic-button\"><i\n"
+"            class=\"fa fa-ban\"></i> beenden</button>"
+
+#: brew/templates/index.html:10
+msgid "Choose a recipe"
+msgstr "Rezept auswählen"
+
+#: brew/templates/prepare.html:27
+msgid "Prepare brew"
+msgstr "Sud vorbereiten"
+
+#: brew/templates/prepare.html:31
+msgid "Ingredients"
+msgstr "Zutaten"
+
+#: brew/templates/prepare.html:38
+msgid "Estimated amount"
+msgstr "Geschätzte Menge"
+
+#: brew/templates/prepare.html:43
+msgid "Malt"
+msgstr "Malz"
+
+#: brew/templates/prepare.html:44
+msgid "Amount"
+msgstr "Menge"
+
+#: brew/templates/prepare.html:45
+msgid "Percentage"
+msgstr "Anteil"
+
+#: brew/templates/prepare.html:57
+msgid "Brew"
+msgstr "Brauen"
+

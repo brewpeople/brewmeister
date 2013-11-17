@@ -24,25 +24,25 @@
   });
 </script>
 
-<h2>Prepare brew</h2>
+<h2>{% trans %}Prepare brew{% endtrans %}</h2>
 
 <div class="row">
   <div class="span12">
-    <h3>Ingredients</h3>
+    <h3>{% trans %}Ingredients{% endtrans %}</h3>
 
     <form action="/brews" method="POST">
       <fieldset>
         <input name="recipe_id" type="hidden" value="{{ recipe._id }}">
       </fieldset>
       <fieldset>
-        Estimated amount <input name="amount" data-bind="value: amountLiter, valueUpdate:'afterkeydown'" type="text" placeholder="20"> Liter
+        {% trans %}Estimated amount{% endtrans %} <input name="amount" data-bind="value: amountLiter, valueUpdate:'afterkeydown'" type="text" placeholder="20"> Liter
       </fieldset>
 
       <table class="table table-hover">
         <tr>
-          <th>Malt</th>
-          <th>Amount</th>
-          <th>Percentage</th>
+          <th>{% trans %}Malt{% endtrans %}</th>
+          <th>{% trans %}Amount{% endtrans %}</th>
+          <th>{% trans %}Percentage{% endtrans %}</th>
         </tr>
         {% for malt in recipe.malts %}
           <tr>
@@ -54,7 +54,7 @@
       </table>
 
       <button type="submit" class="btn btn-primary btn-large"><i class="fa
-          fa-beer"></i> Brew</button>
+          fa-beer"></i> {% trans %}Brew{% endtrans %}</button>
     </form>
   </div>
 </div>

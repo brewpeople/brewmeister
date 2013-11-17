@@ -59,18 +59,18 @@
     update();
   });
 </script>
-  <h2>Mashing</h2>
+  <h2>{% trans %}Mashing{% endtrans %}</h2>
 
   <div class="row">
     <div class="span12">
-      <h3>Steps</h3>
+      <h3>{% trans %}Steps{% endtrans %}</h3>
 
       <table class="table table-hover">
         <tr>
-          <th>Step</th>
-          <th>Time (min)</th>
-          <th>Temperature (°C)</th>
-          <th>Status</th>
+          <th>{% trans %}Step{% endtrans %}</th>
+          <th>{% trans %}Time (min){% endtrans %}</th>
+          <th>{% trans %}Temperature (°C){% endtrans %}</th>
+          <th>{% trans %}Status{% endtrans %}</th>
         </tr>
 
       {% for step in brew.mash %}
@@ -85,7 +85,7 @@
     </div>
   </div>
 
-  <h3>Temperature</h3>
+  <h3>{% trans %}Temperature{% endtrans %}</h3>
   <div class="row">
     <div class="span8">
       <div id="temperature-chart" style="width: 500px; height: 400px">
@@ -97,11 +97,11 @@
 
     <div class="span4">
       <p>
-        <input type="checkbox" id="update-temperature" checked> Update temperature
+        <input type="checkbox" id="update-temperature" checked> {% trans %}Update temperature{% endtrans %}
       </p>
 
-        <p><button type="submit" class="btn btn-danger" id="panic-button"><i
-            class="fa fa-ban"></i> Stop</button> the process immediately.</p>
+        <p>{% trans %}<button type="submit" class="btn btn-danger" id="panic-button"><i
+            class="fa fa-ban"></i> Stop</button> the process immediately.{% endtrans %}</p>
     </div>
   </div>
 
