@@ -8,6 +8,24 @@
   <div class="row">
     <div class="span12">
       <h2>{% trans %}Choose a recipe{% endtrans %}</h2>
+      <table class="table table-hover">
+        <tr>
+          <th>{% trans %}Beer{% endtrans %}</th>
+          <th>{% trans %}Gravity{% endtrans %}</th>
+          <th>{% trans %}Alcohol{% endtrans %}</th>
+          <th>{% trans %}Color{% endtrans %}</th>
+          <th>{% trans %}Bitter{% endtrans %}</th>
+        </tr>
+        {% for recipe in recipes %}
+        <tr>
+          <td><a href="/brews/prepare/{{ recipe._id }}">{{ recipe.name }}</a></td>
+          <td>{{ recipe.characteristics.gravity }}</td>
+          <td>{{ recipe.characteristics.alc }}</td>
+          <td>{{ recipe.characteristics.ebc }}</td>
+          <td>{{ recipe.characteristics.ibu }}</td>
+        </tr>
+        {% endfor %}
+      </table>
       <p>
         <ul>
           {% for recipe in recipes %}
@@ -26,11 +44,13 @@
         <tr>
           <th>{% trans %}Date{% endtrans %}</th>
           <th>{% trans %}Beer{% endtrans %}</th>
+          <th></th>
         </tr>
         {% for brew in brews %}
         <tr>
           <td>{{ brew.date | datetime }}</td>
           <td><a href="/brews/{{ brew._id }}">{{ brew.recipe }}</a></td>
+          <td><a href="/brews/delete/{{ brew._id }}"><i class="fa fa-trash-o"></i></a></td>
         </tr>
         {% endfor %}
       </table>

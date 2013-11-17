@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-11-17 18:58+0100\n"
+"POT-Creation-Date: 2013-11-17 19:17+0100\n"
 "PO-Revision-Date: 2013-11-17 16:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -46,11 +46,11 @@ msgstr "Status"
 msgid "Temperature"
 msgstr "Temperatur"
 
-#: brew/templates/brew.html:100
+#: brew/templates/brew.html:96
 msgid "Update temperature"
 msgstr "Temperatur aktualisieren"
 
-#: brew/templates/brew.html:103
+#: brew/templates/brew.html:99
 msgid ""
 "<button type=\"submit\" class=\"btn btn-danger\" id=\"panic-button\"><i\n"
 "            class=\"fa fa-ban\"></i> Stop</button> the process "
@@ -80,21 +80,37 @@ msgstr "Wer"
 msgid "Choose a recipe"
 msgstr "Rezept auswählen"
 
-#: brew/templates/index.html:19
+#: brew/templates/index.html:13 brew/templates/index.html:46
+msgid "Beer"
+msgstr "Bier"
+
+#: brew/templates/index.html:14
+msgid "Gravity"
+msgstr "Stammwürze"
+
+#: brew/templates/index.html:15
+msgid "Alcohol"
+msgstr "Alkohol"
+
+#: brew/templates/index.html:16
+msgid "Color"
+msgstr "Farbe"
+
+#: brew/templates/index.html:17
+msgid "Bitter"
+msgstr "Bitterkeit"
+
+#: brew/templates/index.html:37
 msgid "Create a <a href=\"/recipes\">new</a> recipe."
 msgstr "Ein <a href=\"/recipes\">neues</a> Rezept anlegen."
 
-#: brew/templates/index.html:24
+#: brew/templates/index.html:42
 msgid "Past brews"
 msgstr "Vergangene Sude"
 
-#: brew/templates/index.html:27
+#: brew/templates/index.html:45
 msgid "Date"
 msgstr "Datum"
-
-#: brew/templates/index.html:28
-msgid "Beer"
-msgstr "Bier"
 
 #: brew/templates/prepare.html:27
 msgid "Prepare brew"
