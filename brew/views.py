@@ -2,7 +2,7 @@ import json
 import jsonschema
 import uuid
 from pkg_resources import resource_string
-from flask import request, render_template, jsonify, redirect
+from flask import request, render_template, jsonify, redirect, url_for
 from bson.objectid import ObjectId
 from brew import app, babel, controller, machine, mongo
 
@@ -66,6 +66,7 @@ def brew():
 
         recipe_id = request.form['recipe_id']
         current_brew = create_brew(recipe_id, [u"Michael Jackson"])
+        machine.reset()
 
         for step in current_brew['mash']:
             machine.append_step(step)
@@ -77,8 +78,12 @@ def brew():
 
 @app.route('/brews/stop', methods=['POST'])
 def stop_brew():
+    global current_brew
+
     machine.stop()
     controller.set_temperature(20.0)
+    current_brew = None
+    return redirect('/')
 
 
 @app.route('/status', methods=['GET'])

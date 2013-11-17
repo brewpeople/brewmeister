@@ -11,8 +11,7 @@ app.config.from_object('brew.settings')
 mongo = PyMongo(app)
 babel = Babel(app)
 controller = TemperatureController(app)
-machine = Machine(controller)
-
+machine = Machine(app, controller)
 
 
 import brew.views
