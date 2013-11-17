@@ -50,11 +50,7 @@
     </tr>
 
   {% for step in brew.mash %}
-    {% if step.state == "pending" %}
-    <tr class="warning">
-    {% else %}
-    <tr>
-    {% endif %}
+    <tr id="{{ step.id }}">
       <td>{{ step.name }}</td>
       <td>{{ step.time }}</td>
       <td>{{ step.temperature }}</td>

@@ -7,34 +7,6 @@ import logging
 log = logging.getLogger(__name__)
 
 
-class HeatChange(object):
-    def __init__(self, controller, temperature):
-        self.controller = controller
-        self.temperature = temperature
-
-    def do(self, fsm, exit_event):
-        log.info("Heating to {} degC".format(self.temperature))
-        fsm.heat()
-        target_temperature = self.temperature
-        current_temperature = self.controller.get_temperature()
-        self.controller.set_temperature(target_temperature)
-
-        while abs(target_temperature - current_temperature) > 1.0:
-            if exit_event.wait(5):
-                return
-
-            current_temperature = self.controller.get_temperature()
-
-
-class Rest(object):
-    def __init__(self, duration):
-        self.duration = duration
-
-    def do(self, fsm, exit_event):
-        log.info("Sleeping for {} minutes".format(self.duration))
-        fsm.rest()
-        exit_event.wait(self.duration * 60)
-
 
 class Machine(object):
     def __init__(self, controller, autopilot=True):
@@ -55,17 +27,31 @@ class Machine(object):
     def in_progress(self):
         return self._fsm.current != 'preparing'
 
-    def append_heat_change(self, temperature):
-        self._steps.append(HeatChange(self._controller, temperature))
+    def append_step(self, step):
+        self._steps.append(step)
 
-    def append_rest(self, duration):
-        self._steps.append(Rest(duration))
+    def heat(self, target_temperature):
+        log.info("Heating to {} degC".format(target_temperature))
+        current_temperature = self._controller.get_temperature()
+        self._controller.set_temperature(target_temperature)
+
+        while abs(target_temperature - current_temperature) > 1.0:
+            if self._exit_event.wait(5):
+                return
+
+            current_temperature = self._controller.get_temperature()
 
     def start(self):
         def run_in_background():
             for step in self._steps:
+                # Heat first
                 if not self._exit_event.is_set():
-                    step.do(self._fsm, self._exit_event)
+                    self._fsm.heat()
+                    self.heat(step['temperature'])
+
+                # Rest some time
+                self._fsm.rest()
+                self._exit_event.wait(step['time'] * 60)
 
             if not self._exit_event.is_set():
                 self._fsm.finish()

@@ -1,5 +1,6 @@
 import json
 import jsonschema
+import uuid
 from pkg_resources import resource_string
 from flask import request, render_template, jsonify, redirect
 from bson.objectid import ObjectId
@@ -14,7 +15,8 @@ def create_brew(recipe_id, brewers):
     mash = []
 
     for step in recipe['mash']:
-        mash.append(dict(name=step['name'],
+        mash.append(dict(id=uuid.uuid4(),
+                         name=step['name'],
                          time=step['time'],
                          temperature=step['temperature'],
                          state='waiting'))
@@ -27,12 +29,6 @@ def create_brew(recipe_id, brewers):
 
 def get_current_brew():
     return mongo.db.brews.find_one({"current": True})
-
-
-def prepare_machine(mash):
-    for step in mash:
-        machine.append_heat_change(step['temperature'])
-        machine.append_rest(step['time'])
 
 
 @app.route('/')
@@ -68,7 +64,9 @@ def brew():
         recipe_id = request.form['recipe_id']
         current_brew = create_brew(recipe_id, [u"Michael Jackson"])
 
-        prepare_machine(current_brew['mash'])
+        for step in current_brew['mash']:
+            machine.append_step(step)
+
         machine.start()
 
     return render_template('brew.html', brew=current_brew, machine=machine)
