@@ -66,21 +66,25 @@
       <h3>{% trans %}Steps{% endtrans %}</h3>
 
       <table class="table table-hover">
-        <tr>
-          <th>{% trans %}Step{% endtrans %}</th>
-          <th>{% trans %}Time (min){% endtrans %}</th>
-          <th>{% trans %}Temperature (°C){% endtrans %}</th>
-          <th>{% trans %}Status{% endtrans %}</th>
-        </tr>
+        <thead>
+          <tr>
+            <th>{% trans %}Step{% endtrans %}</th>
+            <th>{% trans %}Time (min){% endtrans %}</th>
+            <th>{% trans %}Temperature (°C){% endtrans %}</th>
+            <th>{% trans %}Status{% endtrans %}</th>
+          </tr>
+        </thead>
 
-      {% for step in brew.mash %}
-        <tr id="{{ step.id }}">
-          <td>{{ step.name }}</td>
-          <td>{{ step.time }}</td>
-          <td>{{ step.temperature }}</td>
-          <td></td>
-        </tr>
-      {% endfor %}
+        <tbody>
+        {% for step in brew.mash %}
+          <tr id="{{ step.id }}">
+            <td>{{ step.name }}</td>
+            <td>{{ step.time }}</td>
+            <td>{{ step.temperature }}</td>
+            <td></td>
+          </tr>
+        {% endfor %}
+        </tbody>
       </table>
     </div>
   </div>

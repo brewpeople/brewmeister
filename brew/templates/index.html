@@ -9,22 +9,26 @@
     <div class="span12">
       <h2>{% trans %}Choose a recipe{% endtrans %}</h2>
       <table class="table table-hover">
-        <tr>
-          <th>{% trans %}Beer{% endtrans %}</th>
-          <th>{% trans %}Gravity{% endtrans %}</th>
-          <th>{% trans %}Alcohol{% endtrans %}</th>
-          <th>{% trans %}Color{% endtrans %}</th>
-          <th>{% trans %}Bitter{% endtrans %}</th>
-        </tr>
+        <thead>
+          <tr>
+            <th>{% trans %}Beer{% endtrans %}</th>
+            <th>{% trans %}Gravity{% endtrans %}</th>
+            <th>{% trans %}Alcohol{% endtrans %}</th>
+            <th>{% trans %}Color{% endtrans %}</th>
+            <th>{% trans %}Bitter{% endtrans %}</th>
+          </tr>
+        </thead>
+        <tbody>
         {% for recipe in recipes %}
-        <tr>
-          <td><a href="/brews/prepare/{{ recipe._id }}">{{ recipe.name }}</a></td>
-          <td>{{ recipe.characteristics.gravity }}</td>
-          <td>{{ recipe.characteristics.alc }}</td>
-          <td>{{ recipe.characteristics.ebc }}</td>
-          <td>{{ recipe.characteristics.ibu }}</td>
-        </tr>
+          <tr>
+            <td><a href="/brews/prepare/{{ recipe._id }}">{{ recipe.name }}</a></td>
+            <td>{{ recipe.characteristics.gravity }}</td>
+            <td>{{ recipe.characteristics.alc }}</td>
+            <td>{{ recipe.characteristics.ebc }}</td>
+            <td>{{ recipe.characteristics.ibu }}</td>
+          </tr>
         {% endfor %}
+        </tbody>
       </table>
       <p>
         <ul>
@@ -41,11 +45,14 @@
     <div class="span12">
       <h2>{% trans %}Past brews{% endtrans %}</h2>
       <table class="table table-hover">
-        <tr>
-          <th>{% trans %}Date{% endtrans %}</th>
-          <th>{% trans %}Beer{% endtrans %}</th>
-          <th></th>
-        </tr>
+        <thead>
+          <tr>
+            <th>{% trans %}Date{% endtrans %}</th>
+            <th>{% trans %}Beer{% endtrans %}</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
         {% for brew in brews %}
         <tr>
           <td>{{ brew.date | datetime }}</td>
@@ -53,6 +60,7 @@
           <td><a href="/brews/delete/{{ brew._id }}"><i class="fa fa-trash-o"></i></a></td>
         </tr>
         {% endfor %}
+        </tbody>
       </table>
     </div>
   </div>

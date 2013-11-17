@@ -39,11 +39,14 @@
       </fieldset>
 
       <table class="table table-hover">
-        <tr>
-          <th>{% trans %}Malt{% endtrans %}</th>
-          <th>{% trans %}Amount{% endtrans %}</th>
-          <th>{% trans %}Percentage{% endtrans %}</th>
-        </tr>
+        <thead>
+          <tr>
+            <th>{% trans %}Malt{% endtrans %}</th>
+            <th>{% trans %}Amount{% endtrans %}</th>
+            <th>{% trans %}Percentage{% endtrans %}</th>
+          </tr>
+        </thead>
+        <tbody>
         {% for malt in recipe.malts %}
           <tr>
             <td>{{ malt.name }}</td>
@@ -51,6 +54,7 @@
             <td>{{ malt.percentage }} %</td>
           </tr>
         {% endfor %}
+        </tbody>
       </table>
 
       <button type="submit" class="btn btn-primary btn-large"><i class="fa
