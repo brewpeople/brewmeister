@@ -48,16 +48,16 @@ class Machine(object):
 
                 # Heat first
                 if not self._exit_event.is_set():
-                    step['state'] = 'Heating'
+                    step['state'] = 'heat'
                     self._fsm.heat()
                     self.heat(step['temperature'])
 
                 # Rest some time
-                step['state'] = 'Resting'
+                step['state'] = 'rest'
                 self._fsm.rest()
                 self._exit_event.wait(step['time'] * 60)
 
-                step['state'] = 'Done'
+                step['state'] = 'done'
 
             if not self._exit_event.is_set():
                 self._fsm.finish()

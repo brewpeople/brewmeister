@@ -21,14 +21,18 @@
           if (old_selector != "") {
             $(old_selector).removeClass("warning");
             $(old_selector).addClass("success");
-            $(old_selector + " td:nth-child(4)").text("done");
+            $(old_selector + " td:nth-child(4)").html("<i class='fa fa-check'></i>");
+
           }
 
+          $(row_selector).addClass("warning");
           old_selector = row_selector;
         }
 
-        $(row_selector).addClass("warning");
-        $(row_selector + " td:nth-child(4)").text(data.step.state);
+        if (data.step.state == "heat")
+          $(row_selector + " td:nth-child(4)").html("<i class='fa fa-fire'></i>");
+        else if (data.step.state == "rest")
+          $(row_selector + " td:nth-child(4)").html("<i class='fa fa-clock-o'></i>");
 
         if (do_plot) {
           temperatures.push([x, data.temperature]);

@@ -5,7 +5,7 @@
       <p>Brew process in progress. <a href="/brews/1">Take</a> a closer
       look or <a href="/brews/stop">stop</a> immediately.</p>
   {% else %}
-    <h1>Brew a …</h1>
+    <h1>Brew a <i class="fa fa-beer"></i></h1>
       <ul>
         {% for recipe in recipes %}
         <li><a href="/brews/prepare/{{ recipe._id }}">{{ recipe.name }}</a></li>
