@@ -12,8 +12,12 @@
     var plot = $.plot($("#temperature-chart"), [ temperatures ], opts);
     var do_plot = true;
     var old_selector = "";
+    var go_to_index = false;
 
     function update() {
+      if (go_to_index)
+        window.location.replace("/");
+
       $.getJSON('/status', function (data) {
         var row_selector = "#" + data.step.id;
 
@@ -52,7 +56,9 @@
     });
 
     $("#panic-button").click(function() {
-      $.post('/brews/stop');
+      $("#panic-button").prop('disabled', true);
+      $.post('/stop');
+      go_to_index = true;
     });
 
     update();

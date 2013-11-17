@@ -99,6 +99,16 @@ def get_brew(brew_id):
     return render_template('details.html', brew=brew)
 
 
+@app.route('/stop', methods=['POST'])
+def stop_brew():
+    global current_brew
+
+    machine.stop()
+    controller.set_temperature(20.0)
+    current_brew = None
+    return redirect('/')
+
+
 @app.route('/brews/delete/<brew_id>', methods=['GET'])
 def delete_brew(brew_id):
     mongo.db.brews.remove(ObjectId(brew_id))
@@ -109,16 +119,6 @@ def delete_brew(brew_id):
 def prepare(recipe_id):
     recipe = mongo.db.recipes.find_one(ObjectId(recipe_id))
     return render_template('prepare.html', recipe=recipe)
-
-
-@app.route('/brews/stop', methods=['POST'])
-def stop_brew():
-    global current_brew
-
-    machine.stop()
-    controller.set_temperature(20.0)
-    current_brew = None
-    return redirect('/')
 
 
 @app.route('/status', methods=['GET'])
