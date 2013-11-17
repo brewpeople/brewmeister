@@ -7,59 +7,68 @@ import logging
 log = logging.getLogger(__name__)
 
 
+class HeatChange(object):
+    def __init__(self, controller, temperature):
+        self.controller = controller
+        self.temperature = temperature
+
+    def do(self, fsm, exit_event):
+        print("Heating to {} degC".format(self.temperature))
+        fsm.heat()
+        target_temperature = self.temperature
+        current_temperature = self.controller.get_temperature()
+        self.controller.set_temperature(target_temperature)
+
+        while abs(target_temperature - current_temperature) > 1.0:
+            time.sleep(5)
+            current_temperature = self.controller.get_temperature()
+
+
+class Rest(object):
+    def __init__(self, duration):
+        self.duration = duration
+
+    def do(self, fsm, exit_event):
+        print("Sleeping for {} minutes".format(self.duration))
+        fsm.rest()
+        exit_event.wait(self.duration * 60)
+
+
 class Machine(object):
-    def __init__(self, controller):
+    def __init__(self, controller, autopilot=True):
         state_table = {'initial': 'preparing',
                        'events': [{'name': 'heat', 'src': ['preparing', 'waiting', 'resting'], 'dst': 'heating'},
                             {'name': 'wait', 'src': ['heating', 'resting'], 'dst': 'waiting'},
                             {'name': 'rest', 'src': ['waiting', 'heating'], 'dst': 'resting'},
                             {'name': 'finish', 'src': ['waiting', 'resting'], 'dst': 'done'},
-                            {'name': 'reset', 'src': 'finish', 'dst': 'preparing'}],
-                       'callbacks': {
-                            'onheat': self.on_heat,
-                            'onrest': self.on_rest
-                       }}
+                            {'name': 'reset', 'src': 'finish', 'dst': 'preparing'}]}
 
-        self.fsm = fysom.Fysom(state_table)
+        self._fsm = fysom.Fysom(state_table)
+        self._steps = []
+        self._autopilot = autopilot
         self._controller = controller
-        self._threads = []
-        self._exit_request = False
+        self._thread = None
+        self._exit_event = threading.Event()
 
     def in_progress(self):
-        return self.fsm.current != 'preparing'
+        return self._fsm.current != 'preparing'
+
+    def append_heat_change(self, temperature):
+        self._steps.append(HeatChange(self._controller, temperature))
+
+    def append_rest(self, duration):
+        self._steps.append(Rest(duration))
+
+    def start(self):
+        def run_in_background():
+            for step in self._steps:
+                step.do(self._fsm, self._exit_event)
+
+            self._fsm.finish()
+
+        self.thread = threading.Thread(target=run_in_background)
+        self.thread.start()
 
     def stop(self):
-        self._exit_request = True
-
-        for thread in self._threads:
-            thread.join()
-
-        self._exit_request = False
-
-    def on_heat(self, event):
-        def heat():
-            log.info("Heating to {} degC".format(event.temperature))
-            target_temperature = event.temperature
-            current_temperature = self._controller.get_temperature()
-            self._controller.set_temperature(target_temperature)
-
-            while abs(target_temperature - current_temperature) > 1.0 and not self._exit_request:
-                time.sleep(5)
-                current_temperature = self._controller.get_temperature()
-                log.info("Current temperature {}".format(current_temperature))
-
-            event.fsm.wait()
-
-        thread = threading.Thread(target=heat)
-        self._threads.append(thread)
-        thread.start()
-
-    def on_rest(self, event):
-        def rest():
-            print("sleeping for {} minutes".format(event.duration))
-            time.sleep(event.duration * 60)
-            event.fsm.wait()
-
-        thread = threading.Thread(target=rest)
-        self._threads.append(thread)
-        thread.start()
+        self._exit_event.set()
+        self._thread.join()
