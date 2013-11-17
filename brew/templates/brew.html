@@ -31,6 +31,10 @@
       do_plot = ! do_plot;
       update();
     });
+
+    $("#panic-button").click(function() {
+      $.post('/brews/stop');
+    });
     
     update();
   });
@@ -65,7 +69,7 @@
     </div>
   </div>
 
-
   <input type="checkbox" id="update-temperature" checked> Update temperature
+  <button type="submit" class="btn" id="panic-button">Panic</button>
 
 {% endblock %}

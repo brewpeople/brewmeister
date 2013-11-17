@@ -62,11 +62,12 @@ def brew():
     return render_template('brew.html', brew=brew, machine=machine)
 
 
-@app.route('/brews/stop')
+@app.route('/brews/stop', methods=['POST'])
 def stop_brew():
     machine.stop()
     controller.set_temperature(20.0)
-    return redirect('/')
+    return "okay"
+    # return redirect('/')
 
 
 @app.route('/status/temperature', methods=['GET'])

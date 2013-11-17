@@ -13,14 +13,16 @@ class HeatChange(object):
         self.temperature = temperature
 
     def do(self, fsm, exit_event):
-        print("Heating to {} degC".format(self.temperature))
+        log.info("Heating to {} degC".format(self.temperature))
         fsm.heat()
         target_temperature = self.temperature
         current_temperature = self.controller.get_temperature()
         self.controller.set_temperature(target_temperature)
 
         while abs(target_temperature - current_temperature) > 1.0:
-            time.sleep(5)
+            if exit_event.wait(5):
+                return
+
             current_temperature = self.controller.get_temperature()
 
 
@@ -29,7 +31,7 @@ class Rest(object):
         self.duration = duration
 
     def do(self, fsm, exit_event):
-        print("Sleeping for {} minutes".format(self.duration))
+        log.info("Sleeping for {} minutes".format(self.duration))
         fsm.rest()
         exit_event.wait(self.duration * 60)
 
@@ -62,12 +64,14 @@ class Machine(object):
     def start(self):
         def run_in_background():
             for step in self._steps:
-                step.do(self._fsm, self._exit_event)
+                if not self._exit_event.is_set():
+                    step.do(self._fsm, self._exit_event)
 
-            self._fsm.finish()
+            if not self._exit_event.is_set():
+                self._fsm.finish()
 
-        self.thread = threading.Thread(target=run_in_background)
-        self.thread.start()
+        self._thread = threading.Thread(target=run_in_background)
+        self._thread.start()
 
     def stop(self):
         self._exit_event.set()
