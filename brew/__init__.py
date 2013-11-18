@@ -15,3 +15,4 @@ machine = Machine(app, controller)
 
 
 import brew.views
+import brew.rest

@@ -24,13 +24,13 @@
           }
           else {
             $.ajax({
-              url: "{{ url_for(request.endpoint) }}",
+              url: "/api/recipe",
               data: JSON.stringify(values),
               dataType: "json",
               contentType: "application/json; charset=utf-8",
               type: "POST",
               success: function(response) {
-                window.location.href = "{{ url_for('index') }}";
+                window.location.replace("/");
               }
             });
           }

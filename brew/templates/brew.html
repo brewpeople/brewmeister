@@ -18,7 +18,7 @@
       if (go_to_index)
         window.location.replace("/");
 
-      $.getJSON('/status', function (data) {
+      $.getJSON('/api/status', function (data) {
         var row_selector = "#" + data.step.id;
 
         if (old_selector != row_selector) {

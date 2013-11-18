@@ -21,7 +21,7 @@
         <tbody>
         {% for recipe in recipes %}
           <tr>
-            <td><a href="/brews/prepare/{{ recipe._id }}">{{ recipe.name }}</a></td>
+            <td><a href="/prepare/brew/{{ recipe._id }}">{{ recipe.name }}</a></td>
             <td>{{ recipe.characteristics.gravity }}</td>
             <td>{{ recipe.characteristics.alc }}</td>
             <td>{{ recipe.characteristics.ebc }}</td>
@@ -30,15 +30,8 @@
         {% endfor %}
         </tbody>
       </table>
-      <p>
-        <ul>
-          {% for recipe in recipes %}
-          <li><a href="/brews/prepare/{{ recipe._id }}">{{ recipe.name }}</a></li>
-          {% endfor %}
-        </ul>
-      </p>
 
-      <p>{% trans %}Create a <a href="/recipes">new</a> recipe.{% endtrans %}</p>
+      <p>{% trans %}Create a <a href="/create/recipe">new</a> recipe.{% endtrans %}</p>
     </div>
   </div>
   <div class="row">
@@ -56,8 +49,8 @@
         {% for brew in brews %}
         <tr>
           <td>{{ brew.date | datetime }}</td>
-          <td><a href="/brews/{{ brew._id }}">{{ brew.recipe }}</a></td>
-          <td><a href="/brews/delete/{{ brew._id }}"><i class="fa fa-trash-o"></i></a></td>
+          <td><a href="/view/brew/{{ brew._id }}">{{ brew.recipe }}</a></td>
+          <td><a href="/delete/brew/{{ brew._id }}"><i class="fa fa-trash-o"></i></a></td>
         </tr>
         {% endfor %}
         </tbody>
