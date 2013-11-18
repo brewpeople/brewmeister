@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-11-17 19:17+0100\n"
+"POT-Creation-Date: 2013-11-18 23:10+0100\n"
 "PO-Revision-Date: 2013-11-17 16:02+0100\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -18,39 +18,39 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: brew/templates/brew.html:62
+#: brew/templates/brew.html:67
 msgid "Mashing"
 msgstr "Maischen"
 
-#: brew/templates/brew.html:66
+#: brew/templates/brew.html:71
 msgid "Steps"
 msgstr "Schritte"
 
-#: brew/templates/brew.html:70
+#: brew/templates/brew.html:76
 msgid "Step"
 msgstr "Schritt"
 
-#: brew/templates/brew.html:71
+#: brew/templates/brew.html:77
 msgid "Time (min)"
 msgstr "Zeit (min)"
 
-#: brew/templates/brew.html:72
+#: brew/templates/brew.html:78
 msgid "Temperature (°C)"
 msgstr "Temperatur (°C)"
 
-#: brew/templates/brew.html:73
+#: brew/templates/brew.html:79
 msgid "Status"
 msgstr "Status"
 
-#: brew/templates/brew.html:88
+#: brew/templates/brew.html:97
 msgid "Temperature"
 msgstr "Temperatur"
 
-#: brew/templates/brew.html:96
+#: brew/templates/brew.html:105
 msgid "Update temperature"
 msgstr "Temperatur aktualisieren"
 
-#: brew/templates/brew.html:99
+#: brew/templates/brew.html:108
 msgid ""
 "<button type=\"submit\" class=\"btn btn-danger\" id=\"panic-button\"><i\n"
 "            class=\"fa fa-ban\"></i> Stop</button> the process "
@@ -76,39 +76,51 @@ msgstr "Wann"
 msgid "Who"
 msgstr "Wer"
 
+#: brew/templates/edit.html:5
+msgid "Edit recipe"
+msgstr "Rezept bearbeiten"
+
 #: brew/templates/index.html:10
 msgid "Choose a recipe"
 msgstr "Rezept auswählen"
 
-#: brew/templates/index.html:13 brew/templates/index.html:46
+#: brew/templates/index.html:14 brew/templates/index.html:49
 msgid "Beer"
 msgstr "Bier"
 
-#: brew/templates/index.html:14
+#: brew/templates/index.html:15
 msgid "Gravity"
 msgstr "Stammwürze"
 
-#: brew/templates/index.html:15
+#: brew/templates/index.html:16
 msgid "Alcohol"
 msgstr "Alkohol"
 
-#: brew/templates/index.html:16
+#: brew/templates/index.html:17
 msgid "Color"
 msgstr "Farbe"
 
-#: brew/templates/index.html:17
+#: brew/templates/index.html:18
 msgid "Bitter"
 msgstr "Bitterkeit"
 
-#: brew/templates/index.html:37
-msgid "Create a <a href=\"/recipes\">new</a> recipe."
-msgstr "Ein <a href=\"/recipes\">neues</a> Rezept anlegen."
+#: brew/templates/index.html:31
+msgid "Edit"
+msgstr ""
 
-#: brew/templates/index.html:42
+#: brew/templates/index.html:32 brew/templates/index.html:58
+msgid "Delete"
+msgstr ""
+
+#: brew/templates/index.html:39
+msgid "Create a <a href=\"/create/recipe\">new</a> recipe."
+msgstr "Ein <a href=\"/create/recipe\">neues</a> Rezept anlegen."
+
+#: brew/templates/index.html:44
 msgid "Past brews"
 msgstr "Vergangene Sude"
 
-#: brew/templates/index.html:45
+#: brew/templates/index.html:48
 msgid "Date"
 msgstr "Datum"
 
@@ -120,23 +132,26 @@ msgstr "Sud vorbereiten"
 msgid "Ingredients"
 msgstr "Zutaten"
 
-#: brew/templates/prepare.html:38
-msgid "Estimated amount"
-msgstr "Geschätzte Menge"
-
-#: brew/templates/prepare.html:43
+#: brew/templates/prepare.html:35
 msgid "Malt"
 msgstr "Malz"
 
-#: brew/templates/prepare.html:44
+#: brew/templates/prepare.html:36
 msgid "Amount"
 msgstr "Menge"
 
-#: brew/templates/prepare.html:45
+#: brew/templates/prepare.html:37
 msgid "Percentage"
 msgstr "Anteil"
 
-#: brew/templates/prepare.html:57
+#: brew/templates/prepare.html:60
+msgid "Estimated amount <small>(Liter)</small>"
+msgstr "Geschätze Menge <small>(Liter)</small>"
+
+#: brew/templates/prepare.html:63
+msgid "Brewers <small>(comma-separated list)</small>"
+msgstr "Brauer <small>(komma-separierte Liste)</small>"
+
+#: brew/templates/prepare.html:66
 msgid "Brew"
 msgstr "Brauen"
-
