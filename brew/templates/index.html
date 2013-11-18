@@ -1,9 +1,13 @@
 {% extends "layout.html" %}
 {% block body %}
-  {% if machine.in_progress() %}
-    <h2>We are brewing</h2>
-      <p>Brew process in progress. <a href="/brews/1">Take</a> a closer
-      look or <a href="/brews/stop">stop</a> immediately.</p>
+  {% if current_brew %}
+  <div class="row">
+    <div class="span12">
+      <h2>{% trans %}Brew ongoing{% endtrans %}</h2>
+          <p>Brew process in progress. <a href="/brews">Take</a> a closer
+          look or <a href="/stop">stop</a> immediately.</p>
+    </div>
+  </div>
   {% else %}
   <div class="row">
     <div class="span12">
@@ -39,6 +43,7 @@
       <p>{% trans %}Create a <a href="/create/recipe">new</a> recipe.{% endtrans %}</p>
     </div>
   </div>
+  {% endif %}
   <div class="row">
     <div class="span12">
       <h2>{% trans %}Past brews{% endtrans %}</h2>
@@ -62,5 +67,4 @@
       </table>
     </div>
   </div>
-  {% endif %}
 {% endblock %}

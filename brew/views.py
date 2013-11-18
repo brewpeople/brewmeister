@@ -52,8 +52,8 @@ def get_current_brew():
 def index():
     recipes = mongo.db.recipes.find()
     brews = mongo.db.brews.find()
-    return render_template('index.html', recipes=recipes, machine=machine,
-                           brews=brews)
+    return render_template('index.html', recipes=recipes, brews=brews,
+                           current_brew=current_brew)
 
 
 @app.route('/create/recipe', methods=['GET'])
@@ -113,7 +113,7 @@ def delete_brew(brew_id):
     return redirect(url_for('index'))
 
 
-@app.route('/stop', methods=['POST'])
+@app.route('/stop', methods=['GET', 'POST'])
 def stop_brew():
     global current_brew
 
