@@ -1,0 +1,53 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="row">
+  <div class="span12">
+    <h2>{% trans %}Edit recipe{% endtrans %}</h2>
+    <div id="res" class="alert"></div>
+    <form class="form-horizontal"></form>
+
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery/jquery-1.10.2.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery/jquery-ui-1.10.3.custom.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/underscore/underscore-min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jsonform/jsonform.js') }}"></script>
+
+    <script type="text/javascript">
+      $('form').jsonForm({
+        schema:
+        {% autoescape false %}
+        {{ schema }}
+        {% endautoescape %}
+        ,
+        value: 
+        {% autoescape false %}
+        {{ recipe }}
+        {% endautoescape %}
+        ,
+        onSubmit: function(errors, values) {
+          if (errors) {
+            $('#res').html('<p>Again!</p>');
+          }
+          else {
+            $.ajax({
+              url: "/api/recipe/{{ recipe_id }}",
+              data: JSON.stringify(values),
+              dataType: "json",
+              contentType: "application/json; charset=utf-8",
+              type: "PUT",
+              success: function(response) {
+                window.location.replace("/");
+              }
+            });
+          }
+          return false;
+        }
+      });
+
+      $(document).ready(function() {
+        $('._jsonform-array-addmore').html('<i class="fa fa-plus-square"></i>');
+        $('._jsonform-array-deletelast').html('<i class="fa fa-minus-square"></i>');
+      });
+    </script>
+  </div>
+</div>
+{% endblock %}
