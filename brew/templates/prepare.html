@@ -29,37 +29,43 @@
 <div class="row">
   <div class="span12">
     <h3>{% trans %}Ingredients{% endtrans %}</h3>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th>{% trans %}Malt{% endtrans %}</th>
+          <th>{% trans %}Amount{% endtrans %}</th>
+          <th>{% trans %}Percentage{% endtrans %}</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for malt in recipe.malts %}
+        <tr>
+          <td>{{ malt.name }}</td>
+          <td><span data-bind="text: {{ malt.name|replace(' ', '') }}Amount"></span> kg</td>
+          <td>{{ malt.percentage }} %</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
 
+<div class="row">
+  <div class="span12">
     <form action="/brews" method="POST">
       <fieldset>
         <input name="recipe_id" type="hidden" value="{{ recipe._id }}">
       </fieldset>
       <fieldset>
-        {% trans %}Estimated amount{% endtrans %} <input name="amount" data-bind="value: amountLiter, valueUpdate:'afterkeydown'" type="text" placeholder="20"> Liter
+        <label>{% trans %}Estimated amount <small>(Liter)</small>{% endtrans %}</label>
+        <input name="amount" data-bind="value: amountLiter, valueUpdate:'afterkeydown'" type="text" placeholder="20">
+
+        <label>{% trans %}Brewers <small>(comma-separated list)</small>{% endtrans %}</label>
+        <input name="brewers" type="text">
       </fieldset>
-
-      <table class="table table-hover">
-        <thead>
-          <tr>
-            <th>{% trans %}Malt{% endtrans %}</th>
-            <th>{% trans %}Amount{% endtrans %}</th>
-            <th>{% trans %}Percentage{% endtrans %}</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for malt in recipe.malts %}
-          <tr>
-            <td>{{ malt.name }}</td>
-            <td><span data-bind="text: {{ malt.name|replace(' ', '') }}Amount"></span> kg</td>
-            <td>{{ malt.percentage }} %</td>
-          </tr>
-        {% endfor %}
-        </tbody>
-      </table>
-
-      <button type="submit" class="btn btn-primary btn-large"><i class="fa
-          fa-beer"></i> {% trans %}Brew{% endtrans %}</button>
+      <button type="submit" class="btn btn-primary btn-large pull-right"><i class="fa fa-beer"></i> {% trans %}Brew{% endtrans %}</button>
     </form>
   </div>
 </div>
+
 {% endblock %}

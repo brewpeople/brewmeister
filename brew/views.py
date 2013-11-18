@@ -31,7 +31,7 @@ def datetime_filter(value):
     return format_datetime(value, fmt)
 
 
-def create_brew(recipe_id, brewers):
+def create_brew(recipe_id, amount, brewers):
     recipe = mongo.db.recipes.find_one(ObjectId(recipe_id))
     mash = []
 
@@ -44,7 +44,7 @@ def create_brew(recipe_id, brewers):
 
     brew = dict(recipe=recipe['name'], recipe_id=recipe_id,
                 mash=mash, date=datetime.datetime.now(),
-                brewers=brewers)
+                amount=amount, brewers=brewers)
 
     mongo.db.brews.insert(brew)
     return brew
@@ -82,7 +82,9 @@ def brew():
         global current_brew
 
         recipe_id = request.form['recipe_id']
-        current_brew = create_brew(recipe_id, [u"Michael Jackson"])
+        brewers = request.form['brewers'].split(',')
+        amount = float(request.form['amount'])
+        current_brew = create_brew(recipe_id, amount, brewers)
         machine.reset()
 
         for step in current_brew['mash']:
