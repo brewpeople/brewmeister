@@ -1,25 +1,18 @@
 import json
 import time
 import jsonschema
-from pkg_resources import resource_string
 from flask import request, jsonify
 from bson.objectid import ObjectId
 from brew import app, controller, machine, mongo
+from schema import loadd as load_schema
 
-
-def get_schema(path):
-    return resource_string(__name__, path).decode('utf-8')
-
-
-def get_schema_dict(path):
-    return json.loads(get_schema(path))
 
 
 @app.route('/api/recipe', methods=['POST'])
 @app.route('/api/recipe/<recipe_id>', methods=['PUT'])
 def recipe(recipe_id=None):
     recipe_json = request.get_json()
-    schema_dict = get_schema_dict('data/recipe.schema.json')
+    schema_dict = load_schema('data/recipe.schema.json')
     jsonschema.validate(schema_dict, recipe_json)
 
     for malt in recipe_json['malts']:

@@ -3,12 +3,12 @@ import jsonschema
 import uuid
 import time
 import datetime
-from pkg_resources import resource_string
 from flask import request, render_template, jsonify, redirect, url_for
 from flask.ext.babel import format_datetime
 from bson.json_util import dumps
 from bson.objectid import ObjectId
 from brew import app, babel, controller, machine, mongo
+from schema import loads as load_schema
 
 
 current_brew = None
@@ -58,14 +58,14 @@ def index():
 
 @app.route('/create/recipe', methods=['GET'])
 def create_recipe_view():
-    schema = resource_string(__name__, 'data/recipe.schema.json').decode('utf-8')
+    schema = load_schema('data/recipe.schema.json')
     return render_template('create.html', schema=schema)
 
 
 @app.route('/edit/recipe/<recipe_id>', methods=['GET'])
 def edit_recipe_view(recipe_id):
     recipe = dumps(mongo.db.recipes.find_one(ObjectId(recipe_id)))
-    schema = resource_string(__name__, 'data/recipe.schema.json').decode('utf-8')
+    schema = load_schema('data/recipe.schema.json')
     return render_template('edit.html', schema=schema, recipe=recipe,
                            recipe_id=recipe_id)
 
