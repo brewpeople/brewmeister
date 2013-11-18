@@ -13,6 +13,11 @@ def create_recipe():
     schema_dict = json.loads(schema)
     jsonschema.validate(schema_dict, recipe_json)
     mongo.db.recipes.insert(recipe_json)
+
+    for malt in recipe_json['malts']:
+        d = {'name': malt['name']}
+        mongo.db.malts.update(d, d, True)
+
     return jsonify(success=True)
 
 
