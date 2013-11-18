@@ -61,6 +61,12 @@ def view_create_recipe():
     return render_template('create.html', schema=schema)
 
 
+@app.route('/delete/recipe/<recipe_id>', methods=['GET'])
+def delete_recipe(recipe_id):
+    mongo.db.recipes.remove(ObjectId(recipe_id))
+    return redirect(url_for('index'))
+
+
 @app.route('/prepare/brew/<recipe_id>', methods=['GET'])
 def prepare_brew(recipe_id):
     recipe = mongo.db.recipes.find_one(ObjectId(recipe_id))
