@@ -7,11 +7,13 @@ from flask import request, render_template, jsonify, redirect, url_for
 from flask.ext.babel import format_datetime
 from bson.json_util import dumps
 from bson.objectid import ObjectId
-from brew import app, babel, controller, machine, mongo
+from brew import app, babel, controller, machine, mongo, monitor
+from brew.monitor import Monitor
 from schema import loads as load_schema
 
 
 current_brew = None
+monitor = Monitor()
 
 
 @babel.localeselector
@@ -38,14 +40,10 @@ def create_brew(recipe_id, amount, brewers):
 
     brew = dict(recipe=recipe['name'], recipe_id=recipe_id,
                 mash=mash, date=datetime.datetime.now(),
-                amount=amount, brewers=brewers)
+                amount=amount, brewers=brewers, temperatures=[])
 
     mongo.db.brews.insert(brew)
     return brew
-
-
-def get_current_brew():
-    return mongo.db.brews.find_one({"current": True})
 
 
 @app.route('/')
@@ -77,13 +75,13 @@ def delete_recipe(recipe_id):
 
 
 @app.route('/prepare/brew/<recipe_id>', methods=['GET'])
-def prepare_brew(recipe_id):
+def prepare_brew_view(recipe_id):
     recipe = mongo.db.recipes.find_one(ObjectId(recipe_id))
     return render_template('prepare.html', recipe=recipe)
 
 
 @app.route('/brews', methods=['GET', 'POST'])
-def brew():
+def brews_view():
     if request.method == 'POST':
         global current_brew
 
@@ -91,6 +89,8 @@ def brew():
         brewers = request.form['brewers'].split(',')
         amount = float(request.form['amount'])
         current_brew = create_brew(recipe_id, amount, brewers)
+
+        monitor.temperature(current_brew['_id'])
         machine.reset()
 
         for step in current_brew['mash']:
@@ -117,6 +117,7 @@ def delete_brew(brew_id):
 def stop_brew():
     global current_brew
 
+    monitor.stop()
     machine.stop()
     controller.set_temperature(20.0)
     current_brew = None

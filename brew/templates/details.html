@@ -1,5 +1,19 @@
 {% extends "layout.html" %}
 {% block body %}
+<script type="text/javascript" src="{{ url_for('static', filename='js/jquery/jquery-1.10.2.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/flot/jquery.flot.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/flot/jquery.flot.time.min.js') }}"></script>
+<script type="text/javascript">
+  $(document).ready(function() {
+      var opts = { series: { shadowSize: 1 },
+                   yaxis: { min: 10, max: 80 },
+                   xaxis: { mode: "time", timeformat: "%H:%M" } };
+
+    $.getJSON('/api/brews/{{ brew._id }}/temperature', function (data) {
+      var plot = $.plot($("#temperature-chart"), [ data.temperatures ], opts);
+    });
+  });
+</script>
 
 <h2>{% trans %}Brew details{% endtrans %}</h2>
 
@@ -12,6 +26,13 @@
       <dt>{% trans %}Who{% endtrans %}</dt>
       <dd>{{ brew.brewers | join(', ') }}</dd>
     </dl>
+  </div>
+</div>
+
+<div class="row">
+  <div class="span12">
+  <h3>{% trans %}Temperature trend{% endtrans %}</h3>
+    <div id="temperature-chart" style="width: 500px; height: 400px"></div>
   </div>
 </div>
 

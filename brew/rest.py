@@ -28,6 +28,13 @@ def recipe(recipe_id=None):
     return jsonify(success=True)
 
 
+@app.route('/api/brews/<brew_id>/temperature', methods=['GET'])
+def brew_temperature(brew_id):
+    brew = mongo.db.brews.find_one(ObjectId(brew_id))
+    temperatures = [(int(time * 1000), temp) for (time, temp) in brew['temperatures']]
+    return jsonify(temperatures=temperatures)
+
+
 @app.route('/api/status', methods=['GET'])
 def status():
     return jsonify(timestamp=int(time.time() * 1000),
