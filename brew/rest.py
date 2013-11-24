@@ -1,9 +1,10 @@
 import time
 import jsonschema
-from flask import request, jsonify
+from flask import request, jsonify, make_response
 from bson.objectid import ObjectId
 from brew import app, controller, machine, mongo
 from schema import loadd as load_schema
+from qr import make_pdf
 
 
 @app.route('/api/recipe', methods=['POST'])
@@ -34,8 +35,18 @@ def brew_temperature(brew_id):
     return jsonify(temperatures=temperatures)
 
 
+@app.route('/api/brews/<brew_id>/label', methods=['GET'])
+def brew_label(brew_id):
+    output = make_pdf('http://127.0.0.1/view/{}'.format(brew_id))
+    response = make_response(output)
+    response.headers['Content-Disposition'] = 'attachment; filename=qr.pdf'
+    response.mimetype = 'application/pdf'
+    return response
+
+
 @app.route('/api/status', methods=['GET'])
 def status():
     return jsonify(timestamp=int(time.time() * 1000),
                    step=machine.current_step,
                    temperature=controller.get_temperature())
+

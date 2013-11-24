@@ -8,8 +8,8 @@ from brew.state import Machine
 app = Flask(__name__)
 app.config.from_object('brew.settings')
 
-mongo = PyMongo(app)
 babel = Babel(app)
+mongo = PyMongo(app)
 controller = TemperatureController(app)
 machine = Machine(app, controller)
 
