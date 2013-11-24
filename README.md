@@ -1,4 +1,4 @@
-## Brewmeister · Homebrewing 2.0
+## Brewmeister · Controlling home brews
 
 Brewmeister is a server application to organize and control [beer brewing
 processes](http://en.wikipedia.org/wiki/Brewing). It provides an HTML interface
@@ -8,10 +8,11 @@ for human brewers and a REST-API for machine consumption.
 ### Features
 
 * Based on Flask + MongoDB
-* Simple REST-API
-* Full internationalization and localization for German
-* Client- and server-side validation via schemas
+* Simple REST API
+* i18n and l10n for German
+* Client- and server-side validation via JSON schemas
 * Temperature control based on a state machine
+* Bottle cap label generator
 * Absolutely _no_ security measures
 
 
@@ -28,12 +29,11 @@ Setup a MongoDB instance, e.g.
 
 For testing purposes you can pre-populate the database with
 
-    $ python manage.py populatedb
+    $ make init
 
 Generate translation data base and run the debug server with
 
-    $ python manage.py compilepo
-    $ python manage.py runserver
+    $ make
 
 By default, a dummy controller is running with which you can brew a virtual
 beer.

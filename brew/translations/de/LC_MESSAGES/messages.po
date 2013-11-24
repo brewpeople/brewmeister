@@ -106,11 +106,11 @@ msgstr "Bitterkeit"
 
 #: brew/templates/index.html:31
 msgid "Edit"
-msgstr ""
+msgstr "Bearbeiten"
 
 #: brew/templates/index.html:32 brew/templates/index.html:58
 msgid "Delete"
-msgstr ""
+msgstr "Löschen"
 
 #: brew/templates/index.html:39
 msgid "Create a <a href=\"/create/recipe\">new</a> recipe."
@@ -155,3 +155,4 @@ msgstr "Brauer <small>(komma-separierte Liste)</small>"
 #: brew/templates/prepare.html:66
 msgid "Brew"
 msgstr "Brauen"
+
