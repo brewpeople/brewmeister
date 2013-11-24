@@ -1,3 +1,6 @@
 DEBUG = True
 SECRET_KEY = 'some_key'
+
+CACHE_TYPE = 'simple'
+
 CONTROLLER_DUMMY_SLOPE = 5.0

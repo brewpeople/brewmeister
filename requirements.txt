@@ -1,7 +1,8 @@
 Flask
-Flask-Script
-Flask-PyMongo
 Flask-Babel
+Flask-Cache
+Flask-PyMongo
+Flask-Script
 fysom
 jsonschema
 reportlab

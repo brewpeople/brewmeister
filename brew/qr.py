@@ -5,8 +5,10 @@ from reportlab.lib.pagesizes import A4
 from reportlab.graphics.shapes import Drawing
 from reportlab.graphics.barcode.qr import QrCodeWidget
 from reportlab.graphics import renderPDF
+from brew import cache
 
 
+@cache.memoize()
 def make_pdf(data):
     page_width, page_height = A4
     page_margin = 10.0
