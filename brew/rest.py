@@ -1,11 +1,9 @@
-import json
 import time
 import jsonschema
 from flask import request, jsonify
 from bson.objectid import ObjectId
 from brew import app, controller, machine, mongo
 from schema import loadd as load_schema
-
 
 
 @app.route('/api/recipe', methods=['POST'])
@@ -31,7 +29,8 @@ def recipe(recipe_id=None):
 @app.route('/api/brews/<brew_id>/temperature', methods=['GET'])
 def brew_temperature(brew_id):
     brew = mongo.db.brews.find_one(ObjectId(brew_id))
-    temperatures = [(int(time * 1000), temp) for (time, temp) in brew['temperatures']]
+    temperatures = [(int(t * 1000), temp)
+                    for (t, temp) in brew['temperatures']]
     return jsonify(temperatures=temperatures)
 
 

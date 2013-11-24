@@ -47,13 +47,14 @@ class ArduinoController(TemperatureController):
 class DummyController(TemperatureController):
     def __init__(self, slope, current_temperature=20.0):
         """Create a new dummy controller with a given temperature slope in
-        degree celsius per minute and a current temperature in degree celsius."""
+        degree celsius per minute and a current temperature in degree
+        celsius."""
         # Adjust the slope to degree per sec
         self._slope = slope / 60.0
         self._set_temperature = current_temperature
         self._last_temperature = current_temperature
         self._last_time = datetime.datetime.now()
-        
+
     def get_temperature(self):
         current_time = datetime.datetime.now()
         elapsed = (current_time - self._last_time).total_seconds()

@@ -1,5 +1,4 @@
 import json
-import subprocess
 from flask.ext.script import Manager
 from brew import app, mongo
 

@@ -1,4 +1,3 @@
-import time
 import threading
 import fysom
 
@@ -7,10 +6,10 @@ class Machine(object):
     def __init__(self, app, controller, autopilot=True):
         state_table = {'initial': 'preparing',
                        'events': [{'name': 'heat', 'src': ['preparing', 'waiting', 'resting'], 'dst': 'heating'},
-                            {'name': 'wait', 'src': ['heating', 'resting'], 'dst': 'waiting'},
-                            {'name': 'rest', 'src': ['waiting', 'heating'], 'dst': 'resting'},
-                            {'name': 'finish', 'src': ['waiting', 'resting'], 'dst': 'done'},
-                            {'name': 'reset', 'src': ['preparing', 'resting', 'heating', 'finish'], 'dst': 'preparing'}]}
+                                  {'name': 'wait', 'src': ['heating', 'resting'], 'dst': 'waiting'},
+                                  {'name': 'rest', 'src': ['waiting', 'heating'], 'dst': 'resting'},
+                                  {'name': 'finish', 'src': ['waiting', 'resting'], 'dst': 'done'},
+                                  {'name': 'reset', 'src': ['preparing', 'resting', 'heating', 'finish'], 'dst': 'preparing'}]}
 
         self._fsm = fysom.Fysom(state_table)
         self._steps = []

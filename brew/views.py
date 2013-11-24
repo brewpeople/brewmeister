@@ -1,11 +1,8 @@
-import json
-import jsonschema
 import uuid
-import time
 import datetime
 import cStringIO
 import math
-from flask import request, render_template, jsonify, redirect, url_for, make_response
+from flask import request, render_template, redirect, url_for, make_response
 from flask.ext.babel import format_datetime
 from bson.json_util import dumps
 from bson.objectid import ObjectId
@@ -14,7 +11,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.graphics.shapes import Drawing
 from reportlab.graphics.barcode.qr import QrCodeWidget
 from reportlab.graphics import renderPDF
-from brew import app, babel, controller, machine, mongo, monitor
+from brew import app, babel, controller, machine, mongo
 from brew.monitor import Monitor
 from schema import loads as load_schema
 
