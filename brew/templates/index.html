@@ -1,5 +1,27 @@
 {% extends "layout.html" %}
 {% block body %}
+    <script type="text/javascript" src="{{ url_for('static', filename='js/jquery/jquery-1.10.2.min.js') }}"></script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+          $('a.get-label').click(function() {
+            var url = $(this).attr('href');
+            var icon = $('i', this);
+            var toggle = function() {
+              icon.toggleClass('fa-print')
+              icon.toggleClass('fa-spinner')
+              icon.toggleClass('fa-spin')
+            }
+
+            toggle();
+
+            $.get(url + '/prepare', function(data) {
+              toggle();
+              window.location.replace(url);
+            });
+            return false;
+          });
+      });
+    </script>
   {% if current_brew %}
   <div class="row">
     <div class="span12">
@@ -47,7 +69,7 @@
   <div class="row">
     <div class="span12">
       <h2>{% trans %}Past brews{% endtrans %}</h2>
-      <table class="table table-hover">
+      <table id="brew-table" class="table table-hover">
         <thead>
           <tr>
             <th>{% trans %}Date{% endtrans %}</th>
@@ -62,7 +84,7 @@
           <td><a href="/view/brew/{{ brew._id }}">{{ brew.recipe }}</a></td>
           <td>
             <a href="/delete/brew/{{ brew._id }}" title="{% trans %}Delete{% endtrans %}"><i class="fa fa-trash-o"></i></a>&ensp;
-            <a href="/api/brews/{{ brew._id }}/label" title="{% trans %}Label{% endtrans %}"><i class="fa fa-print"></i></a>
+            <a href="/api/brews/{{ brew._id }}/label" class="get-label" title="{% trans %}Label{% endtrans %}"><i class="fa fa-print"></i></a>
           </td>
         </tr>
         {% endfor %}

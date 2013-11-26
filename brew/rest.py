@@ -36,12 +36,18 @@ def brew_temperature(brew_id):
 
 
 @app.route('/api/brews/<brew_id>/label', methods=['GET'])
-def brew_label(brew_id):
+def get_brew_label(brew_id):
     output = make_pdf('http://127.0.0.1/view/{}'.format(brew_id))
     response = make_response(output)
     response.headers['Content-Disposition'] = 'attachment; filename=qr.pdf'
     response.mimetype = 'application/pdf'
     return response
+
+
+@app.route('/api/brews/<brew_id>/label/prepare', methods=['GET'])
+def prepare_brew_label(brew_id):
+    output = make_pdf('http://127.0.0.1/view/{}'.format(brew_id))
+    return jsonify(success=True)
 
 
 @app.route('/api/status', methods=['GET'])
