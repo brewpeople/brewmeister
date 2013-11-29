@@ -6,21 +6,21 @@ class TemperatureController(object):
     def __init__(self, app):
         controller_type = 'dummy'
 
-        if 'CONTROLLER_TYPE' in app.config:
-            controller_type = app.config['CONTROLLER_TYPE']
+        if 'BREW_CONTROLLER_TYPE' in app.config:
+            controller_type = app.config['BREW_CONTROLLER_TYPE']
 
         if controller_type == 'arduino':
             filename = '/dev/ttyUSB0'
 
-            if 'CONTROLLER_ARDUINO_DEVICE' in app.config:
-                filename = app.config['CONTROLLER_ARDUINO_DEVICE']
+            if 'BREW_CONTROLLER_ARDUINO_DEVICE' in app.config:
+                filename = app.config['BREW_CONTROLLER_ARDUINO_DEVICE']
 
             self._real_controller = ArduinoController(filename)
         elif controller_type == 'dummy':
             slope = 2.0
 
-            if 'CONTROLLER_DUMMY_SLOPE' in app.config:
-                slope = float(app.config['CONTROLLER_DUMMY_SLOPE'])
+            if 'BREW_CONTROLLER_DUMMY_SLOPE' in app.config:
+                slope = float(app.config['BREW_CONTROLLER_DUMMY_SLOPE'])
 
             self._real_controller = DummyController(slope)
 

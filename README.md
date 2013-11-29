@@ -43,9 +43,9 @@ beer.
 
 The following config options are available:
 
-* `CONTROLLER_TYPE`: one of `['dummy', 'arduino']`
-* `CONTROLLER_ARDUINO_DEVICE`: device filename (`/dev/ttyUSB0` per default)
-* `CONTROLLER_DUMMY_SLOPE`: temperature increase in degrees per minute 
+* `BREW_CONTROLLER_TYPE`: one of `['dummy', 'arduino']`
+* `BREW_CONTROLLER_ARDUINO_DEVICE`: device filename (`/dev/ttyUSB0` per default)
+* `BREW_CONTROLLER_DUMMY_SLOPE`: temperature increase in degrees per minute
 
 
 ### Screenshot
