@@ -1,5 +1,7 @@
 import datetime
 import random
+import serial
+import struct
 
 
 def TemperatureController(app):
@@ -14,17 +16,52 @@ def TemperatureController(app):
     raise ValueError("Unknown controller type")
 
 
-class ArduinoController(object):
+class ArduinoController(TemperatureController):
+
+    COMMAND_SET = 0x0
+    COMMAND_GET = 0x1
+
+    INSTRUMENT_TEMPERATURE = 0x0
+
+    TYPE_DECIMAL = 0x0
+    TYPE_STRING = 0x1
+    TYPE_BOOLEAN = 0x3
+
+    STATUS_OK = 0x0
+
+    set_map = {
+        INSTRUMENT_TEMPERATURE: TYPE_DECIMAL
+    }
+
     def __init__(self, app):
-        self._filename = app.config.get('BREW_CONTROLLER_ARDUINO_DEVICE', '/dev/ttyUSB0')
+        filename = app.config.get('BREW_CONTROLLER_ARDUINO_DEVICE', '/dev/ttyUSB0')
+        self.conn = serial.Serial(filename)
+
+    def write_command(self, cmd):
+        self.conn.write(struct.pack('B', cmd))
+
+        reply = struct.unpack('B', self.conn.read(1))
+        status = reply >> 2
+
+        if status != STATUS_OK:
+            raise Exception("Problem reading {}".format(instrument))
+
+        return reply
+
+    def get(self, instrument):
+        cmd = (COMMAND_GET << 6) & (instrument << 2)
+        self.write_command(cmd)
+
+    def set(self, instrument, value):
+        dtype = set_map[instrument]
+        cmd = (COMMAND_SET << 6) & (instrument << 2) & dtype
+        self.write_command(cmd)
 
     def get_temperature(self):
-        with open(self._filename, 'r') as f:
-            return f.read()
+        return self.get(INSTRUMENT_TEMPERATURE)
 
     def set_temperature(self, temperature):
-        with open(self._filename, 'w') as f:
-            f.write(str(temperature))
+        self.set(INSTRUMENT_TEMPERATURE, temperature)
 
 
 class DummyController(object):
