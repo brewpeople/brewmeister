@@ -7,7 +7,7 @@ Brewmeister-compatible Arduino.
 The following specification assumes, the *host* to be the machine that
 communicates with the Arduino via a serial line interface.
 
-# The protocol
+## Protocol sequence
 
 Communication is *always* initiated by the host using a simple call-response
 sequence:
@@ -42,20 +42,20 @@ Code    | Command
 The object bits specify the actor/sensor that is refered to. At the moment two
 instruments are specified:
 
-Code    | Instrument
---------| -----------
-0x0     | Temperature
-0x1     | Stir
+Code    | Instrument    | Set               | Get
+--------|---------------|-------------------|-------
+0x0     | Temperature   | FP, deg Celsius   | Dito
+0x1     | Stir          | Boolean           | Dito
 
 A `set` command, requires the last two bits to specify the type of data that is
 following. On a `get` command, these are ignored on the Arduino:
 
-Code    | Data type
---------|---------------------------------------
-0x0     | 4 bytes, fixed width point 24.8
-0x1     | NULL-terminated variable length string 
-0x2     | reserved
-0x3     | reserved
+Code    | Data type     | Structure
+--------|---------------|---------------------------------------
+0x0     | Decimal       | 4 bytes, fixed width point 24.8
+0x1     | String        | NULL-terminated variable length string
+0x2     | Boolean       | 0 == False, anything else is True
+0x3     | reserved      | n/a
 
 
 ## Result packet
