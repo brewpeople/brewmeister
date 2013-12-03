@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 {% block body %}
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery/jquery-1.10.2.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/sortable/sortable.min.js') }}"></script>
     <script type="text/javascript">
       $(document).ready(function() {
           $('a.get-label').click(function() {
@@ -34,7 +35,7 @@
   <div class="row">
     <div class="span12">
       <h2>{% trans %}Choose a recipe{% endtrans %}</h2>
-      <table class="table table-hover">
+      <table class="table table-hover" data-sortable>
         <thead>
           <tr>
             <th>{% trans %}Beer{% endtrans %}</th>
@@ -69,7 +70,7 @@
   <div class="row">
     <div class="span12">
       <h2>{% trans %}Past brews{% endtrans %}</h2>
-      <table id="brew-table" class="table table-hover">
+      <table id="brew-table" class="table table-hover" data-sortable>
         <thead>
           <tr>
             <th>{% trans %}Date{% endtrans %}</th>
