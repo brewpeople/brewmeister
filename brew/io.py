@@ -2,40 +2,21 @@ import datetime
 import random
 
 
-class TemperatureController(object):
+def TemperatureController(app):
+    controller_type = app.config.get('BREW_CONTROLLER_TYPE', 'dummy')
+    app.logger.info("Using {} controller".format(controller_type))
+
+    if controller_type == 'arduino':
+        return ArduinoController(app)
+    elif controller_type == 'dummy':
+        return DummyController(app)
+
+    raise ValueError("Unknown controller type")
+
+
+class ArduinoController(object):
     def __init__(self, app):
-        controller_type = 'dummy'
-
-        if 'BREW_CONTROLLER_TYPE' in app.config:
-            controller_type = app.config['BREW_CONTROLLER_TYPE']
-
-        app.logger.info("Using {} controller".format(controller_type))
-
-        if controller_type == 'arduino':
-            filename = '/dev/ttyUSB0'
-
-            if 'BREW_CONTROLLER_ARDUINO_DEVICE' in app.config:
-                filename = app.config['BREW_CONTROLLER_ARDUINO_DEVICE']
-
-            self._real_controller = ArduinoController(filename)
-        elif controller_type == 'dummy':
-            slope = 2.0
-
-            if 'BREW_CONTROLLER_DUMMY_SLOPE' in app.config:
-                slope = float(app.config['BREW_CONTROLLER_DUMMY_SLOPE'])
-
-            self._real_controller = DummyController(slope)
-
-    def get_temperature(self):
-        return self._real_controller.get_temperature()
-
-    def set_temperature(self, temperature):
-        self._real_controller.set_temperature(temperature)
-
-
-class ArduinoController(TemperatureController):
-    def __init__(self, filename):
-        self._filename = filename
+        self._filename = app.config.get('BREW_CONTROLLER_ARDUINO_DEVICE', '/dev/ttyUSB0')
 
     def get_temperature(self):
         with open(self._filename, 'r') as f:
@@ -46,11 +27,16 @@ class ArduinoController(TemperatureController):
             f.write(str(temperature))
 
 
-class DummyController(TemperatureController):
-    def __init__(self, slope, current_temperature=20.0):
+class DummyController(object):
+    def __init__(self, app, current_temperature=20.0):
         """Create a new dummy controller with a given temperature slope in
         degree celsius per minute and a current temperature in degree
         celsius."""
+        slope = 2.0
+
+        if 'BREW_CONTROLLER_DUMMY_SLOPE' in app.config:
+            slope = float(app.config['BREW_CONTROLLER_DUMMY_SLOPE'])
+
         # Adjust the slope to degree per sec
         self._slope = slope / 60.0
         self._set_temperature = current_temperature
