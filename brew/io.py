@@ -9,6 +9,8 @@ class TemperatureController(object):
         if 'BREW_CONTROLLER_TYPE' in app.config:
             controller_type = app.config['BREW_CONTROLLER_TYPE']
 
+        app.logger.info("Using {} controller".format(controller_type))
+
         if controller_type == 'arduino':
             filename = '/dev/ttyUSB0'
 
