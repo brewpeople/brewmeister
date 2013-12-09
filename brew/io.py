@@ -16,6 +16,18 @@ def TemperatureController(app):
     raise ValueError("Unknown controller type")
 
 
+class ArduinoConnection(object):
+    """Low-level communication interface to the Arduino."""
+    def __init__(self, filename):
+        self.conn = serial.Serial(filename)
+
+    def write(self, data):
+        self.conn.write(data)
+
+    def read(self, n_bytes):
+        return self.conn.read(n_bytes)
+
+
 class ArduinoController(TemperatureController):
 
     COMMAND_SET = 0x0
@@ -33,9 +45,9 @@ class ArduinoController(TemperatureController):
         INSTRUMENT_TEMPERATURE: TYPE_DECIMAL
     }
 
-    def __init__(self, app):
+    def __init__(self, app, connection=None):
         filename = app.config.get('BREW_CONTROLLER_ARDUINO_DEVICE', '/dev/ttyUSB0')
-        self.conn = serial.Serial(filename)
+        self.conn = connection if connection else ArduinoConnection(filename)
 
     def write_command(self, cmd):
         self.conn.write(struct.pack('B', cmd))
@@ -50,7 +62,7 @@ class ArduinoController(TemperatureController):
 
     def get(self, instrument):
         cmd = (COMMAND_GET << 6) & (instrument << 2)
-        self.write_command(cmd)
+        reply = self.write_command(cmd)
 
     def set(self, instrument, value):
         dtype = set_map[instrument]
