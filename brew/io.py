@@ -28,7 +28,7 @@ class ArduinoConnection(object):
         return self.conn.read(n_bytes)
 
 
-class ArduinoController(TemperatureController):
+class ArduinoController(object):
 
     COMMAND_SET = 0x0
     COMMAND_GET = 0x1
