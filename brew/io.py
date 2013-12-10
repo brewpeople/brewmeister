@@ -33,7 +33,7 @@ class ArduinoController(object):
     COMMAND_SET = 0x0
     COMMAND_GET = 0x1
 
-    INSTRUMENT_TEMPERATURE = 0x0
+    TEMPERATURE = 0x0
 
     TYPE_DECIMAL = 0x0
     TYPE_STRING = 0x1
@@ -41,8 +41,8 @@ class ArduinoController(object):
 
     STATUS_OK = 0x0
 
-    set_map = {
-        INSTRUMENT_TEMPERATURE: TYPE_DECIMAL
+    arg_map = {
+        TEMPERATURE: TYPE_DECIMAL
     }
 
     def __init__(self, app, connection=None):
@@ -65,15 +65,15 @@ class ArduinoController(object):
         reply = self.write_command(cmd)
 
     def set(self, instrument, value):
-        dtype = set_map[instrument]
+        dtype = arg_map[instrument]
         cmd = (COMMAND_SET << 6) & (instrument << 2) & dtype
         self.write_command(cmd)
 
     def get_temperature(self):
-        return self.get(INSTRUMENT_TEMPERATURE)
+        return self.get(TEMPERATURE)
 
     def set_temperature(self, temperature):
-        self.set(INSTRUMENT_TEMPERATURE, temperature)
+        self.set(TEMPERATURE, temperature)
 
 
 class DummyController(object):
