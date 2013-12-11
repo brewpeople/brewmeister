@@ -53,27 +53,27 @@ class ArduinoController(object):
         self.conn.write(struct.pack('B', cmd))
 
         reply = struct.unpack('B', self.conn.read(1))
-        status = reply >> 2
+        status = reply[0] >> 2
 
-        if status != STATUS_OK:
-            raise Exception("Problem reading {}".format(instrument))
+        if status != self.STATUS_OK:
+            raise Exception("Problem writing command {}".format(cmd))
 
         return reply
 
     def get(self, instrument):
-        cmd = (COMMAND_GET << 6) & (instrument << 2)
-        reply = self.write_command(cmd)
+        cmd = (self.COMMAND_GET << 6) & (instrument << 2)
+        return self.write_command(cmd)
 
     def set(self, instrument, value):
-        dtype = arg_map[instrument]
-        cmd = (COMMAND_SET << 6) & (instrument << 2) & dtype
+        dtype = self.arg_map[instrument]
+        cmd = (self.COMMAND_SET << 6) & (instrument << 2) & dtype
         self.write_command(cmd)
 
     def get_temperature(self):
-        return self.get(TEMPERATURE)
+        return self.get(self.TEMPERATURE)
 
     def set_temperature(self, temperature):
-        self.set(TEMPERATURE, temperature)
+        self.set(self.TEMPERATURE, temperature)
 
 
 class DummyController(object):
