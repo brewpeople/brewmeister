@@ -6,7 +6,6 @@ import struct
 
 def TemperatureController(app):
     controller_type = app.config.get('BREW_CONTROLLER_TYPE', 'dummy')
-    app.logger.info("Using {} controller".format(controller_type))
 
     if controller_type == 'arduino':
         return ArduinoController(app)
