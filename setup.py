@@ -7,7 +7,6 @@ setup(
     version=VERSION,
     long_description=open('README.md').read(),
     packages=find_packages(),
-    scripts=['bin/brewmeister'],
     include_package_data=True,
     zip_safe=False,
     install_requires=[
