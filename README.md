@@ -16,38 +16,6 @@ for human brewers and a REST-API for machine consumption.
 * Absolutely _no_ security measures
 
 
-### Setup
-
-Prepare a [virtualenv](http://www.virtualenv.org/en/latest/) and install all
-requirements:
-
-    $ pip install --upgrade -r requirements.txt
-
-Setup a MongoDB instance, e.g.
-
-    $ sudo apt-get install mongodb-server
-
-For testing purposes you can pre-populate the database with
-
-    $ make init
-
-Generate translation data base and run the debug server with
-
-    $ make
-
-By default, a dummy controller is running with which you can brew a virtual
-beer.
-
-
-### Customization
-
-The following config options are available:
-
-* `BREW_CONTROLLER_TYPE`: one of `['dummy', 'arduino']`
-* `BREW_CONTROLLER_ARDUINO_DEVICE`: device filename (`/dev/ttyUSB0` per default)
-* `BREW_CONTROLLER_DUMMY_SLOPE`: temperature increase in degrees per minute
-
-
 ### Documentation
 
 Is hosted at [readthedocs.org](http://brewmeister.readthedocs.org).
