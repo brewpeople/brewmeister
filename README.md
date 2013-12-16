@@ -48,6 +48,11 @@ The following config options are available:
 * `BREW_CONTROLLER_DUMMY_SLOPE`: temperature increase in degrees per minute
 
 
+### Documentation
+
+Is hosted at [readthedocs.org](http://brewmeister.readthedocs.org).
+
+
 ### Screenshot
 
 ![screenshot](http://i.imgur.com/TGDSKAO.png)
