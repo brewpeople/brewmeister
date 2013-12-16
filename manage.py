@@ -1,4 +1,4 @@
-#! python
+#!/usr/bin/env python
 
 import json
 from flask.ext.script import Manager
