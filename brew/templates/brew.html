@@ -21,6 +21,12 @@
     $.getJSON('/api/status', function (data) {
       var table = $("#steps");
 
+      /* Initialize temperatures */
+      $.getJSON('/api/brews/{{ brew._id }}/temperature', function (data) {
+        temperatures = data.temperatures;
+      });
+
+      /* Set success for past steps */
       $("#steps > tbody > tr").each(function() {
         if (this.id == data.step.id)
           return false;
