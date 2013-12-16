@@ -35,3 +35,4 @@ class Monitor(object):
     def stop(self):
         self.exit_event.set()
         self.thread.join()
+        self.thread = None
