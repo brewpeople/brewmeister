@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from brew.version import VERSION
+from docs.conf import VERSION
 
 setup(
     name='Brewmeister',

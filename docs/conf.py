@@ -3,9 +3,7 @@
 import sys
 import os
 
-sys.path.insert(0, os.path.abspath('..'))
-
-from brew.version import VERSION
+VERSION = '0.1.0dev'
 
 extensions = []
 
