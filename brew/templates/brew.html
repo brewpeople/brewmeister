@@ -14,6 +14,22 @@
     var old_selector = "";
     var go_to_index = false;
 
+    function set_row_status(selector, fa_icon) {
+      $(selector + " td:nth-child(4)").html("<i class='fa " + fa_icon + "'></i>");
+    }
+
+    $.getJSON('/api/status', function (data) {
+      var table = $("#steps");
+
+      $("#steps > tbody > tr").each(function() {
+        if (this.id == data.step.id)
+          return false;
+
+        $(this).addClass("success");
+        set_row_status("#" + this.id, 'fa-check');
+      });
+    });
+
     function update() {
       if (go_to_index)
         window.location.replace("/");
@@ -25,18 +41,19 @@
           if (old_selector != "") {
             $(old_selector).removeClass("warning");
             $(old_selector).addClass("success");
-            $(old_selector + " td:nth-child(4)").html("<i class='fa fa-check'></i>");
-
+            set_row_status(old_selector, 'fa-check');
           }
 
           $(row_selector).addClass("warning");
           old_selector = row_selector;
         }
 
-        if (data.step.state == "heat")
-          $(row_selector + " td:nth-child(4)").html("<i class='fa fa-fire'></i>");
-        else if (data.step.state == "rest")
-          $(row_selector + " td:nth-child(4)").html("<i class='fa fa-clock-o'></i>");
+        if (data.step.state == "heat") {
+          set_row_status(row_selector, 'fa-fire');
+        }
+        else if (data.step.state == "rest") {
+          set_row_status(row_selector, 'fa-clock-o');
+        }
 
         if (do_plot) {
           temperatures.push([data.timestamp, data.temperature]);
@@ -70,7 +87,7 @@
     <div class="span12">
       <h3>{% trans %}Steps{% endtrans %}</h3>
 
-      <table class="table table-hover">
+      <table id="steps" class="table table-hover">
         <thead>
           <tr>
             <th>{% trans %}Step{% endtrans %}</th>

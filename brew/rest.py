@@ -55,4 +55,3 @@ def status():
     return jsonify(timestamp=int(time.time() * 1000),
                    step=machine.current_step,
                    temperature=controller.get_temperature())
-
