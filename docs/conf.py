@@ -5,7 +5,7 @@ import os
 
 VERSION = '0.1.0dev'
 
-extensions = []
+extensions = ['sphinxcontrib.httpdomain']
 
 templates_path = ['_templates']
 source_suffix = '.rst'

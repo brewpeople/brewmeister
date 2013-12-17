@@ -7,3 +7,5 @@ fysom
 jsonschema
 pyserial
 reportlab
+sphinx
+sphinxcontrib-httpdomain
