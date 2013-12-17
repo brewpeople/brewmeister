@@ -1,3 +1,8 @@
+===========
+Development
+===========
+
+
 Arduino Brew Control Protocol
 =============================
 
@@ -88,3 +93,18 @@ Code    Description
 0x2     Set command invalid
 0x3     Get command invalid
 =====   ===================
+
+RESTful HTTP API
+================
+
+.. http:post:: /api/recipe/(int:recipe_id)
+
+    Recipe data of (`recipe_id`).
+
+.. http:get:: /api/brews/(int:brew_id)/temperature
+
+    Archived temperature data for (`brew_id`).
+
+.. http:get:: /api/status
+
+    Status of the current brew.
