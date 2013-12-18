@@ -2,7 +2,7 @@ CONFIG=babel.cfg
 MESSAGES=messages.pot
 TRANSLATIONS_DIR=brew/translations
 
-.PHONY: createpo compilepo init install run updatepot
+.PHONY: createpo compilepo init install run updatepot $(MESSAGES)
 
 all: run
 
