@@ -2,7 +2,7 @@ CONFIG=babel.cfg
 MESSAGES=messages.pot
 TRANSLATIONS_DIR=brew/translations
 
-.PHONY: createpo compilepo init install run updatepot $(MESSAGES)
+.PHONY: createpo compilepo init install run updatepo updatepot
 
 all: run
 
@@ -18,8 +18,8 @@ createpo: $(MESSAGES)
 compilepo: $(MESSAGES)
 	@pybabel compile -f -d $(TRANSLATIONS_DIR)
 
-updatepot: $(MESSAGES)
+updatepo: $(MESSAGES)
 	@pybabel update -i $(MESSAGES) -d $(TRANSLATIONS_DIR)
 
-$(MESSAGES):
+updatepot:
 	@pybabel extract -F $(CONFIG) -o $(MESSAGES) .
