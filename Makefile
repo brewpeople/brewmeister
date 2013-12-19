@@ -1,12 +1,15 @@
 CONFIG=babel.cfg
 MESSAGES=messages.pot
-TRANSLATIONS_DIR=brew/translations
+TRANSLATIONS=brew/translations
+ALL_LINGUAS=cs de
+POFILES=$(shell LINGUAS="$(ALL_LINGUAS)"; DIR="$(TRANSLATIONS)"; for lang in $$LINGUAS; do printf "$$DIR/$$lang/LC_MESSAGES/messages.po "; done)
+MOFILES=$(patsubst %.po,%.mo,$(POFILES))
 
-.PHONY: createpo compilepo init install run updatepo updatepot
+.PHONY: createpo init run updatepo updatepot
 
 all: run
 
-run: compilepo
+run: $(MOFILES)
 	@python manage.py runserver
 
 init:
@@ -15,11 +18,11 @@ init:
 createpo: $(MESSAGES)
 	@echo "\n>>> Enter language code"; read lang_code; pybabel init -i $(MESSAGES) -d $(TRANSLATIONS_DIR) -l $$lang_code
 
-compilepo: $(MESSAGES)
-	@pybabel compile -f -d $(TRANSLATIONS_DIR)
-
 updatepo: $(MESSAGES)
 	@pybabel update -i $(MESSAGES) -d $(TRANSLATIONS_DIR)
 
 updatepot:
 	@pybabel extract -F $(CONFIG) -o $(MESSAGES) .
+
+%.mo: %.po
+	@pybabel compile -f -i $< -o $@
