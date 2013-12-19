@@ -6,11 +6,10 @@ import struct
 
 COMMAND_GET = 0xf0
 COMMAND_SET = 0xf1
-COMMAND_STATUS = 0xf2
 
 DS18B20 = 0xf1
 HEATER = 0xf2
-MOTOR = 0xf3
+STIRRER = 0xf3
 
 
 def TemperatureController(app):
@@ -42,37 +41,55 @@ class ArduinoController(object):
             self.conn = None
             self.status = str(exception)
 
+    def send_header(self, command, device):
+        self.conn.write(struct.pack('B', command))
+        self.conn.write(struct.pack('B', device))
+
+    def write_boolean(self, device, value):
+        if self.connected:
+            self.send_header(COMMAND_SET, device)
+            self.conn.write(struct.pack('?', value))
+
+    def read_boolean(self, device):
+        if self.connected:
+            self.send_header(COMMAND_GET, device)
+            return struct.unpack('?', self.conn.read(1))[0]
+
+    def write_float(self, device, value):
+        if self.connected:
+            self.send_header(COMMAND_SET, device)
+            self.conn.write(struct.pack('f', value))
+
+    def read_float(self, device):
+        if self.connected:
+            self.send_header(COMMAND_GET, device)
+            return struct.unpack('f', self.conn.read(4))[0]
+
     @property
     def temperature(self):
         if not self.connected:
             return 0.0
 
-        self.conn.write(struct.pack('B', COMMAND_GET))
-        self.conn.write(struct.pack('B', DS18B20))
-        temp = struct.unpack('f', self.conn.read(4))[0]
-        return temp
+        return self.read_float(DS18B20)
 
     def set_reference_temperature(self, temperature):
-        if self.connected:
-            self.conn.write(struct.pack('B', COMMAND_SET))
-            self.conn.write(struct.pack('B', DS18B20))
-            self.conn.write(struct.pack('f', temperature))
+        self.write_float(DS18B20, temperature)
 
     @property
     def heating(self):
-        return False
+        return self.read_boolean(HEATER)
 
     @heating.setter
     def heating(self, value):
-        pass
+        self.write_boolean(HEATER, value)
 
     @property
     def stirring(self):
-        return False
+        return self.read_boolean(STIRRER)
 
     @stirring.setter
     def stirring(self, value):
-        pass
+        self.write_boolean(STIRRER, value)
 
 
 class DummyController(object):
