@@ -3,6 +3,23 @@ Development
 ===========
 
 
+Contributing
+============
+
+Translations
+------------
+
+The easiest way to add or improve translations is to go to the Transifex
+`project page <https://www.transifex.com/projects/p/brewmeister>`_ and request
+a new language or start digging on the existing ones. This is the preferred way
+for translators, as the messages source file is uploaded when necessary.
+
+You can also add and translate manually. First create a new language with ``make
+createpo``, enter the targetted language code and edit the translation file in
+``brew/translations/<lang>/LC_MESSAGES/messages.po``. Once finished, you can add
+and commit this file and issue a pull request on GitHub.
+
+
 Arduino Brew Control Protocol
 =============================
 
