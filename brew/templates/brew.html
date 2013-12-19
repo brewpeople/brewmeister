@@ -19,6 +19,14 @@
       $(selector + " td:nth-child(4)").html("<i class='fa " + fa_icon + "'></i>");
     }
 
+    function checkSelector(selector) {
+      if (selector != "") {
+        $(selector).removeClass("warning");
+        $(selector).addClass("success");
+        set_row_status(selector, 'fa-check');
+      }
+    }
+
     $.getJSON('/api/status', function (data) {
       var table = $("#steps");
 
@@ -58,24 +66,27 @@
         window.location.replace("/");
 
       $.getJSON('/api/status', function (data) {
+        if (data.state == "preparing") {
+          checkSelector(old_selector);
+          return false;
+        }
+
         var row_selector = "#" + data.step.id;
 
         if (old_selector != row_selector) {
-          if (old_selector != "") {
-            $(old_selector).removeClass("warning");
-            $(old_selector).addClass("success");
-            set_row_status(old_selector, 'fa-check');
-          }
-
+          checkSelector(old_selector);
           $(row_selector).addClass("warning");
           old_selector = row_selector;
         }
 
-        if (data.step.state == "heat") {
-          set_row_status(row_selector, 'fa-fire');
-        }
-        else if (data.step.state == "rest") {
-          set_row_status(row_selector, 'fa-clock-o');
+        switch (data.state) {
+          case "heating":
+            set_row_status(row_selector, 'fa-fire');
+            break;
+
+          case "resting":
+            set_row_status(row_selector, 'fa-clock-o');
+            break;
         }
 
         if (do_plot) {
@@ -93,7 +104,6 @@
 
     $('#update-switch').on('switch-change', function (e, data) {
       do_plot = data.value;
-      update();
     });
 
     $("#panic-button").click(function() {

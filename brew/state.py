@@ -11,7 +11,7 @@ class Machine(object):
                                   {'name': 'finish', 'src': ['waiting', 'resting'], 'dst': 'done'},
                                   {'name': 'reset', 'src': ['preparing', 'resting', 'heating', 'finish'], 'dst': 'preparing'}]}
 
-        self._fsm = fysom.Fysom(state_table)
+        self.fsm = fysom.Fysom(state_table)
         self._steps = []
         self._autopilot = autopilot
         self._controller = controller
@@ -20,7 +20,7 @@ class Machine(object):
         self.current_step = None
 
     def in_progress(self):
-        return self._fsm.current not in ('preparing', 'done')
+        return self.fsm.current not in ('preparing', 'done')
 
     def append_step(self, step):
         self._steps.append(step)
@@ -44,13 +44,13 @@ class Machine(object):
                 # Heat first
                 if not self._exit_event.is_set():
                     step['state'] = 'heat'
-                    self._fsm.heat()
+                    self.fsm.heat()
                     self.heat(step['temperature'])
 
                 # Rest some time
                 if not self._exit_event.is_set():
                     step['state'] = 'rest'
-                    self._fsm.rest()
+                    self.fsm.rest()
                     self._exit_event.wait(step['time'] * 60)
 
                 step['state'] = 'done'
@@ -59,7 +59,7 @@ class Machine(object):
                     break
 
             self.current_step = None
-            self._fsm.reset()
+            self.fsm.reset()
 
         self._exit_event = threading.Event()
         self._thread = threading.Thread(target=run_in_background)

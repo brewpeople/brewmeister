@@ -53,6 +53,7 @@ def prepare_brew_label(brew_id):
 @app.route('/api/status', methods=['GET'])
 def status():
     return jsonify(timestamp=int(time.time() * 1000),
+                   state=machine.fsm.current,
                    step=machine.current_step,
                    connected=controller.connected,
                    heating=controller.heating,
