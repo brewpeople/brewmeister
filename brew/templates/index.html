@@ -25,13 +25,9 @@
 
         function checkSwitch() {
           $.getJSON('/api/status', function (data) {
-            if (data.connected) {
-              $('#controller-switch').bootstrapSwitch('setActive', false);
-            }
-            else {
-              $('#heater-switch').bootstrapSwitch('setActive', false);
-              $('#stirrer-switch').bootstrapSwitch('setActive', false);
-            }
+            $('#controller-switch').bootstrapSwitch('setActive', !data.connected);
+            $('#heater-switch').bootstrapSwitch('setActive', data.connected);
+            $('#stirrer-switch').bootstrapSwitch('setActive', data.connected);
 
             $('#controller-switch').bootstrapSwitch('setState', data.connected);
             $('#heater-switch').bootstrapSwitch('setState', data.heating);
@@ -54,12 +50,15 @@
         /* Initialize device switches */
         checkSwitch();
 
-        /* If controller is ready, enable device switches */
         $('#controller-switch').on('switch-change', function (e, data) {
           if (data.value) {
-            $('#heater-switch').bootstrapSwitch('setActive', true);
-            $('#stirrer-switch').bootstrapSwitch('setActive', true);
-            $('#controller-switch').bootstrapSwitch('setActive', false);
+            $.ajax({
+              url: '/api/reconnect',
+              type: "PUT",
+              success: function(response) {
+                checkSwitch();
+              }
+            });
           }
         });
 

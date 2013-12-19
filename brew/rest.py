@@ -82,3 +82,9 @@ def stop(device):
         setattr(controller, device, False)
 
     return jsonify(success=True)
+
+
+@app.route('/api/reconnect', methods=['PUT'])
+def reconnect():
+    controller.reconnect()
+    return jsonify(success=controller.connected)

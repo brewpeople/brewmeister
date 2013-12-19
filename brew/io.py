@@ -36,6 +36,7 @@ class ArduinoController(object):
 
     def reconnect(self):
         try:
+            print "reconnect"
             self.conn = serial.Serial(self.filename)
         except OSError as exception:
             self.conn = None
@@ -110,13 +111,10 @@ class DummyController(object):
 
         self.heating = False
         self.stirring = False
-
-    @property
-    def connected(self):
-        return True
+        self.connected = False
 
     def reconnect(self):
-        pass
+        self.connected = True
 
     @property
     def temperature(self):
