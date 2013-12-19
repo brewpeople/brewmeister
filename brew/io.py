@@ -31,7 +31,8 @@ class ArduinoController(object):
         self.status = None
         self.reconnect()
 
-    def is_ok(self):
+    @property
+    def connected(self):
         return self.conn != None
 
     def reconnect(self):
@@ -88,7 +89,8 @@ class DummyController(object):
         self.heating = False
         self.stirring = False
 
-    def is_ok(self):
+    @property
+    def connected(self):
         return True
 
     def reconnect(self):

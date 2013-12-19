@@ -23,7 +23,7 @@
           return false;
         });
 
-        {% if not controller.is_ok() %}
+        {% if not controller.connected %}
         $('#heater-switch').bootstrapSwitch('setActive', false);
         $('#stirrer-switch').bootstrapSwitch('setActive', false);
         {% else %}
@@ -91,7 +91,7 @@
                 data-on="success" data-off="danger"
                 data-on-label="<i class='fa fa-check'></i>"
                 data-off-label="<i class='fa fa-exclamation'></i>">
-                <input type="checkbox" {% if controller.is_ok() %} checked{% endif %}>
+                <input type="checkbox" {% if controller.connected %} checked{% endif %}>
               </div>
             </td>
             <td width=75%>{{ controller.status }}</td>
