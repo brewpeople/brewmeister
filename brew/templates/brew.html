@@ -149,12 +149,6 @@
       <table class="table table-hover">
         <tbody>
           <tr>
-            <td>{% trans %}Process{% endtrans %}</td>
-            <td>
-              <button type="submit" class="btn btn-danger" id="panic-button"><i class="fa fa-ban"></i> {% trans %}stop{% endtrans %}</button>
-            </td>
-          </tr>
-          <tr>
             <td>{% trans %}Temperature{% endtrans %}</td>
             <td>
               <div id="update-switch" class="make-switch switch-small"
@@ -184,8 +178,14 @@
                 data-on-label="<i class='fa fa-cogs'></i>"
                 data-off-label="<i class='fa fa-power-off'></i>">
                 <input id="stirrer-switch-input" type="checkbox">
+              </div>
             </td>
           </tr>
+          <tr>
+            <td></td>
+            <td>
+              <button type="submit" class="btn btn-danger" id="panic-button"><i class="fa fa-ban"></i> {% trans %}stop{% endtrans %}</button>
+            </td>
           </tr>
         </tbody>
       </table>
