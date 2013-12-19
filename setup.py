@@ -4,7 +4,7 @@ from docs.conf import VERSION
 setup(
     name='Brewmeister',
     version=VERSION,
-    long_description=open('README.md').read(),
+    long_description=open('README.rst').read(),
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
