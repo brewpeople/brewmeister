@@ -2,6 +2,7 @@
 {% block body %}
     <script type="text/javascript" src="{{ url_for('static', filename='js/jquery/jquery-1.10.2.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/sortable/sortable.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap/bootstrap-switch.js') }}"></script>
     <script type="text/javascript">
       $(document).ready(function() {
           $('a.get-label').click(function() {
@@ -21,6 +22,21 @@
             });
             return false;
           });
+
+          {% if not controller.is_ok() %}
+          $('#heater-switch').bootstrapSwitch('setActive', false);
+          $('#stirrer-switch').bootstrapSwitch('setActive', false);
+          {% else %}
+          $('#controller-switch').bootstrapSwitch('setActive', false);
+          {% endif %}
+
+          $('#controller-switch').on('switch-change', function (e, data) {
+            if (data.value) {
+              $('#heater-switch').bootstrapSwitch('setActive', true);
+              $('#stirrer-switch').bootstrapSwitch('setActive', true);
+              $('#controller-switch').bootstrapSwitch('setActive', false);
+            }
+          });
       });
     </script>
   {% if current_brew %}
@@ -32,6 +48,51 @@
     </div>
   </div>
   {% else %}
+  <div class="row">
+    <div class="span12">
+      <h2>{% trans %}Hardware{% endtrans %}</h2>
+      <table class="table table-hover">
+        <tbody>
+          <tr>
+            <td>{% trans %}Controller {% endtrans %}</td>
+            <td>
+              <div id="controller-switch" class="make-switch switch-small"
+                data-on="success" data-off="danger"
+                data-on-label="<i class='fa fa-check'></i>"
+                data-off-label="<i class='fa fa-exclamation'></i>">
+                <input type="checkbox" {% if controller.is_ok() %} checked{% endif %}>
+              </div>
+            </td>
+            <td width=75%>{{ controller.status }}</td>
+          </tr>
+          <tr>
+            <td>{% trans %}Heater {% endtrans %}</td>
+            <td>
+              <div id="heater-switch" class="make-switch switch-small"
+                data-on="success" data-off="default"
+                data-on-label="<i class='fa fa-fire'></i>"
+                data-off-label="<i class='fa fa-power-off'></i>">
+                <input id="heater-switch-input" type="checkbox">
+              </div>
+            </td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>{% trans %}Stirrer {% endtrans %}</td>
+            <td>
+              <div id="stirrer-switch" class="make-switch switch-small"
+                data-on="success" data-off="default"
+                data-on-label="<i class='fa fa-cogs'></i>"
+                data-off-label="<i class='fa fa-power-off'></i>">
+                <input id="stirrer-switch-input" type="checkbox">
+            </td>
+            <td></td>
+          </tr>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
   <div class="row">
     <div class="span12">
       <h2>{% trans %}Choose a recipe{% endtrans %}</h2>

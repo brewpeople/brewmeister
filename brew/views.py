@@ -48,8 +48,9 @@ def create_brew(recipe_id, amount, brewers):
 def index():
     recipes = mongo.db.recipes.find()
     brews = mongo.db.brews.find()
-    return render_template('index.html', recipes=recipes, brews=brews,
-                           current_brew=current_brew)
+    return render_template('index.html',
+                           recipes=recipes, brews=brews,
+                           controller=controller, current_brew=current_brew)
 
 
 @app.route('/create/recipe', methods=['GET'])
