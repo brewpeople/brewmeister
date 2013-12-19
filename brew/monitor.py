@@ -20,7 +20,7 @@ class Monitor(object):
                     break
 
                 with app.app_context():
-                    temperature = controller.get_temperature()
+                    temperature = controller.temperature
                     now = time.time()
                     query = {'_id': ObjectId(brew_id)}
                     op = {'$push': {'temperatures': (now, temperature)}}

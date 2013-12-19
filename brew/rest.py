@@ -57,7 +57,7 @@ def status():
                    connected=controller.connected,
                    heating=controller.heating,
                    stirring=controller.stirring,
-                   temperature=controller.get_temperature())
+                   temperature=controller.temperature)
 
 
 @app.route('/api/status/<device>', methods=['GET'])

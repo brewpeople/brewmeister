@@ -118,6 +118,6 @@ def stop_brew():
 
     monitor.stop()
     machine.stop()
-    controller.set_temperature(20.0)
+    controller.set_reference_temperature(20.0)
     current_brew = None
     return redirect('/')

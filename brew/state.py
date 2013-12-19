@@ -26,15 +26,15 @@ class Machine(object):
         self._steps.append(step)
 
     def heat(self, target_temperature):
-        current_temperature = self._controller.get_temperature()
-        self._controller.set_temperature(target_temperature)
+        current_temperature = self._controller.temperature
+        self._controller.set_reference_temperature(target_temperature)
 
         while abs(target_temperature - current_temperature) > 1.0:
             if self._exit_event.wait(5):
                 return
 
-            self._controller.set_temperature(target_temperature)
-            current_temperature = self._controller.get_temperature()
+            self._controller.set_reference_temperature(target_temperature)
+            current_temperature = self._controller.temperature
 
     def start(self):
         def run_in_background():

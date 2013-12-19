@@ -42,7 +42,8 @@ class ArduinoController(object):
             self.conn = None
             self.status = str(exception)
 
-    def get_temperature(self):
+    @property
+    def temperature(self):
         if not self.connected:
             return 0.0
 
@@ -51,7 +52,7 @@ class ArduinoController(object):
         temp = struct.unpack('f', self.conn.read(4))[0]
         return temp
 
-    def set_temperature(self, temperature):
+    def set_reference_temperature(self, temperature):
         if self.connected:
             self.conn.write(struct.pack('B', COMMAND_SET))
             self.conn.write(struct.pack('B', DS18B20))
@@ -100,7 +101,8 @@ class DummyController(object):
     def reconnect(self):
         pass
 
-    def get_temperature(self):
+    @property
+    def temperature(self):
         current_time = datetime.datetime.now()
         elapsed = (current_time - self._last_time).total_seconds()
         self._last_time = current_time
@@ -121,5 +123,5 @@ class DummyController(object):
 
         return self._last_temperature
 
-    def set_temperature(self, temperature):
+    def set_reference_temperature(self, temperature):
         self._set_temperature = temperature
