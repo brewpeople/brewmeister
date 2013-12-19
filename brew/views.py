@@ -11,11 +11,12 @@ from schema import loads as load_schema
 
 current_brew = None
 monitor = Monitor()
+LANG_CODES = ['en', 'de', 'cs']
 
 
 @babel.localeselector
 def get_locale():
-    return request.accept_languages.best_match(['en', 'de'])
+    return request.accept_languages.best_match(LANG_CODES)
 
 
 @app.template_filter('datetime')

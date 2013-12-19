@@ -11,7 +11,7 @@ Features
 
 * Based on Flask + MongoDB
 * Simple REST API
-* i18n and l10n for German
+* i18n and l10n for German and Czech
 * Client- and server-side validation via JSON schemas
 * Temperature control based on a state machine
 * Bottle cap label generator
