@@ -52,6 +52,22 @@ class ArduinoController(object):
         self.conn.write(struct.pack('B', DS18B20))
         self.conn.write(struct.pack('f', temperature))
 
+    @property
+    def heating(self):
+        return False
+
+    @heating.setter
+    def heating(self, value):
+        pass
+
+    @property
+    def stirring(self):
+        return False
+
+    @stirring.setter
+    def stirring(self, value):
+        pass
+
 
 class DummyController(object):
     def __init__(self, app, current_temperature=20.0):
@@ -68,6 +84,9 @@ class DummyController(object):
         self._set_temperature = current_temperature
         self._last_temperature = current_temperature
         self._last_time = datetime.datetime.now()
+
+        self.heating = False
+        self.stirring = False
 
     def is_ok(self):
         return True

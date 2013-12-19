@@ -55,3 +55,27 @@ def status():
     return jsonify(timestamp=int(time.time() * 1000),
                    step=machine.current_step,
                    temperature=controller.get_temperature())
+
+
+@app.route('/api/status/<device>', methods=['GET'])
+def device_status(device):
+    if hasattr(controller, device):
+        return jsonify(status=getattr(controller, device), success=True)
+
+    return jsonify(success=False)
+
+
+@app.route('/api/start/<device>', methods=['PUT'])
+def start(device):
+    if hasattr(controller, device):
+        setattr(controller, device, True)
+
+    return jsonify(success=True)
+
+
+@app.route('/api/stop/<device>', methods=['PUT'])
+def stop(device):
+    if hasattr(controller, device):
+        setattr(controller, device, False)
+
+    return jsonify(success=True)
