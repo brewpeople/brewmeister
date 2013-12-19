@@ -27,8 +27,19 @@ def TemperatureController(app):
 class ArduinoController(object):
 
     def __init__(self, app, connection=None):
-        filename = app.config.get('BREW_CONTROLLER_ARDUINO_DEVICE', '/dev/ttyUSB0')
-        self.conn = serial.Serial(filename)
+        self.filename = app.config.get('BREW_CONTROLLER_ARDUINO_DEVICE', '/dev/ttyUSB0')
+        self.status = None
+        self.reconnect()
+
+    def is_ok(self):
+        return self.conn != None
+
+    def reconnect(self):
+        try:
+            self.conn = serial.Serial(self.filename)
+        except OSError as exception:
+            self.conn = None
+            self.status = str(exception)
 
     def get_temperature(self):
         self.conn.write(struct.pack('B', COMMAND_GET))
@@ -57,6 +68,12 @@ class DummyController(object):
         self._set_temperature = current_temperature
         self._last_temperature = current_temperature
         self._last_time = datetime.datetime.now()
+
+    def is_ok(self):
+        return True
+
+    def reconnect(self):
+        pass
 
     def get_temperature(self):
         current_time = datetime.datetime.now()
