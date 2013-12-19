@@ -16,10 +16,10 @@ init:
 	@python manage.py populatedb
 
 createpo: $(MESSAGES)
-	@echo "\n>>> Enter language code"; read lang_code; pybabel init -i $(MESSAGES) -d $(TRANSLATIONS_DIR) -l $$lang_code
+	@echo "\n>>> Enter language code"; read lang_code; pybabel init -i $(MESSAGES) -d $(TRANSLATIONS) -l $$lang_code
 
 updatepo: $(MESSAGES)
-	@pybabel update -i $(MESSAGES) -d $(TRANSLATIONS_DIR)
+	@pybabel update -i $(MESSAGES) -d $(TRANSLATIONS)
 
 updatepot:
 	@pybabel extract -F $(CONFIG) -o $(MESSAGES) .
