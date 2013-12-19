@@ -43,15 +43,19 @@ class ArduinoController(object):
             self.status = str(exception)
 
     def get_temperature(self):
+        if not self.connected:
+            return 0.0
+
         self.conn.write(struct.pack('B', COMMAND_GET))
         self.conn.write(struct.pack('B', DS18B20))
         temp = struct.unpack('f', self.conn.read(4))[0]
         return temp
 
     def set_temperature(self, temperature):
-        self.conn.write(struct.pack('B', COMMAND_SET))
-        self.conn.write(struct.pack('B', DS18B20))
-        self.conn.write(struct.pack('f', temperature))
+        if self.connected:
+            self.conn.write(struct.pack('B', COMMAND_SET))
+            self.conn.write(struct.pack('B', DS18B20))
+            self.conn.write(struct.pack('f', temperature))
 
     @property
     def heating(self):

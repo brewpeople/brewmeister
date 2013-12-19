@@ -54,6 +54,7 @@ def prepare_brew_label(brew_id):
 def status():
     return jsonify(timestamp=int(time.time() * 1000),
                    step=machine.current_step,
+                   connected=controller.connected,
                    heating=controller.heating,
                    stirring=controller.stirring,
                    temperature=controller.get_temperature())

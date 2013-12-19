@@ -23,15 +23,17 @@
           return false;
         });
 
-        {% if not controller.connected %}
-        $('#heater-switch').bootstrapSwitch('setActive', false);
-        $('#stirrer-switch').bootstrapSwitch('setActive', false);
-        {% else %}
-        $('#controller-switch').bootstrapSwitch('setActive', false);
-        {% endif %}
-
         function checkSwitch() {
           $.getJSON('/api/status', function (data) {
+            if (data.connected) {
+              $('#controller-switch').bootstrapSwitch('setActive', false);
+            }
+            else {
+              $('#heater-switch').bootstrapSwitch('setActive', false);
+              $('#stirrer-switch').bootstrapSwitch('setActive', false);
+            }
+
+            $('#controller-switch').bootstrapSwitch('setState', data.connected);
             $('#heater-switch').bootstrapSwitch('setState', data.heating);
             $('#stirrer-switch').bootstrapSwitch('setState', data.stirring);
           });
@@ -91,7 +93,7 @@
                 data-on="success" data-off="danger"
                 data-on-label="<i class='fa fa-check'></i>"
                 data-off-label="<i class='fa fa-exclamation'></i>">
-                <input type="checkbox" {% if controller.connected %} checked{% endif %}>
+                <input type="checkbox">
               </div>
             </td>
             <td width=75%>{{ controller.status }}</td>
