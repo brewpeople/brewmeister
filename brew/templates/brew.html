@@ -3,6 +3,7 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/jquery/jquery-1.10.2.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/flot/jquery.flot.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/flot/jquery.flot.time.min.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap/bootstrap-switch.js') }}"></script>
 <script type="text/javascript">
   $(document).ready(function() {
     var temperatures = [];
@@ -35,6 +36,22 @@
         set_row_status("#" + this.id, 'fa-check');
       });
     });
+
+    function checkSwitch() {
+      $.getJSON('/api/status', function (data) {
+        if (data.connected) {
+          $('#controller-switch').bootstrapSwitch('setActive', false);
+        }
+        else {
+          $('#heater-switch').bootstrapSwitch('setActive', false);
+          $('#stirrer-switch').bootstrapSwitch('setActive', false);
+        }
+
+        $('#controller-switch').bootstrapSwitch('setState', data.connected);
+        $('#heater-switch').bootstrapSwitch('setState', data.heating);
+        $('#stirrer-switch').bootstrapSwitch('setState', data.stirring);
+      });
+    }
 
     function update() {
       if (go_to_index)
@@ -69,12 +86,13 @@
           plot.draw();
         }
 
+        checkSwitch();
         setTimeout(update, 2000);
       });
     }
 
-    $("#update-temperature").change(function() {
-      do_plot = ! do_plot;
+    $('#update-switch').on('switch-change', function (e, data) {
+      do_plot = data.value;
       update();
     });
 
@@ -125,11 +143,52 @@
 
     <div class="span4">
       <p>
-        <input type="checkbox" id="update-temperature" checked> {% trans %}Update temperature{% endtrans %}
       </p>
 
-        <p>{% trans %}<button type="submit" class="btn btn-danger" id="panic-button"><i
-            class="fa fa-ban"></i> Stop</button> the process immediately.{% endtrans %}</p>
+        <p></p>
+      <table class="table table-hover">
+        <tbody>
+          <tr>
+            <td>{% trans %}Process{% endtrans %}</td>
+            <td>
+              <button type="submit" class="btn btn-danger" id="panic-button"><i class="fa fa-ban"></i> {% trans %}stop{% endtrans %}</button>
+            </td>
+          </tr>
+          <tr>
+            <td>{% trans %}Temperature{% endtrans %}</td>
+            <td>
+              <div id="update-switch" class="make-switch switch-small"
+                data-on="default" data-off="default"
+                data-on-label="<i class='fa fa-refresh'></i>"
+                data-off-label="<i class='fa fa-power-off'></i>">
+                <input type="checkbox" id="update-switch-input" checked>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>{% trans %}Heater{% endtrans %}</td>
+            <td>
+              <div id="heater-switch" class="make-switch switch-small"
+                data-on="success" data-off="default"
+                data-on-label="<i class='fa fa-fire'></i>"
+                data-off-label="<i class='fa fa-power-off'></i>">
+                <input id="heater-switch-input" type="checkbox">
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>{% trans %}Stirrer{% endtrans %}</td>
+            <td>
+              <div id="stirrer-switch" class="make-switch switch-small"
+                data-on="success" data-off="default"
+                data-on-label="<i class='fa fa-cogs'></i>"
+                data-off-label="<i class='fa fa-power-off'></i>">
+                <input id="stirrer-switch-input" type="checkbox">
+            </td>
+          </tr>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 

@@ -138,6 +138,9 @@ class DummyController(object):
         else:
             self._last_temperature += elapsed * self._slope
 
+        self.heating = abs(self._last_temperature - self._set_temperature) > 0.5
+        self.stirring = self.heating
+
         return self._last_temperature
 
     def set_reference_temperature(self, temperature):
