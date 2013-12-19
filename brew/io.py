@@ -4,6 +4,15 @@ import serial
 import struct
 
 
+COMMAND_GET = 0xf0
+COMMAND_SET = 0xf1
+COMMAND_STATUS = 0xf2
+
+DS18B20 = 0xf1
+HEATER = 0xf2
+MOTOR = 0xf3
+
+
 def TemperatureController(app):
     controller_type = app.config.get('BREW_CONTROLLER_TYPE', 'dummy')
 
@@ -15,64 +24,22 @@ def TemperatureController(app):
     raise ValueError("Unknown controller type")
 
 
-class ArduinoConnection(object):
-    """Low-level communication interface to the Arduino."""
-    def __init__(self, filename):
-        self.conn = serial.Serial(filename)
-
-    def write(self, data):
-        self.conn.write(data)
-
-    def read(self, n_bytes):
-        return self.conn.read(n_bytes)
-
-
 class ArduinoController(object):
-
-    COMMAND_SET = 0x0
-    COMMAND_GET = 0x1
-
-    TEMPERATURE = 0x0
-
-    TYPE_DECIMAL = 0x0
-    TYPE_STRING = 0x1
-    TYPE_BOOLEAN = 0x3
-
-    STATUS_OK = 0x0
-
-    arg_map = {
-        TEMPERATURE: TYPE_DECIMAL
-    }
 
     def __init__(self, app, connection=None):
         filename = app.config.get('BREW_CONTROLLER_ARDUINO_DEVICE', '/dev/ttyUSB0')
-        self.conn = connection if connection else ArduinoConnection(filename)
-
-    def write_command(self, cmd):
-        self.conn.write(struct.pack('B', cmd))
-
-        reply = struct.unpack('B', self.conn.read(1))
-        status = reply[0] >> 2
-
-        if status != self.STATUS_OK:
-            raise Exception("Problem writing command {}".format(cmd))
-
-        return reply
-
-    def get(self, instrument):
-        cmd = (self.COMMAND_GET << 6) & (instrument << 2)
-        return self.write_command(cmd)
-
-    def set(self, instrument, value):
-        dtype = self.arg_map[instrument]
-        cmd = (self.COMMAND_SET << 6) & (instrument << 2) & dtype
-        self.write_command(cmd)
+        self.conn = serial.Serial(filename)
 
     def get_temperature(self):
-        return self.get(self.TEMPERATURE)
+        self.conn.write(struct.pack('B', COMMAND_GET))
+        self.conn.write(struct.pack('B', DS18B20))
+        temp = struct.unpack('f', self.conn.read(4))[0]
+        return temp
 
     def set_temperature(self, temperature):
-        self.set(self.TEMPERATURE, temperature)
+        self.conn.write(struct.pack('B', COMMAND_SET))
+        self.conn.write(struct.pack('B', DS18B20))
+        self.conn.write(struct.pack('f', temperature))
 
 
 class DummyController(object):

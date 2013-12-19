@@ -33,6 +33,7 @@ class Machine(object):
             if self._exit_event.wait(5):
                 return
 
+            self._controller.set_temperature(target_temperature)
             current_temperature = self._controller.get_temperature()
 
     def start(self):
