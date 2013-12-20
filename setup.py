@@ -9,6 +9,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     zip_safe=False,
+    scripts=['bin/brewmeister'],
     install_requires=[
         'Babel>=1.3',
         'Flask>=0.10.1',
