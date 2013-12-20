@@ -27,6 +27,39 @@ def recipe(recipe_id=None):
     return jsonify(success=True)
 
 
+@app.route('/api/brews', methods=['GET'])
+def get_brews():
+    brews = [str(each['_id']) for each in mongo.db.brews.find()]
+    return jsonify(brews=brews)
+
+
+@app.route('/api/brews/<brew_id>', methods=['GET'])
+def get_brew_details(brew_id):
+    # Lame attempt to avoid serialization of the _id
+    brew = mongo.db.brews.find_one(ObjectId(brew_id))
+
+    if brew:
+        data = {k: v for k, v in brew.items() if k != '_id'}
+        return jsonify(data)
+
+    return jsonify(success=False)
+
+
+@app.route('/api/brews/<brew_id>/note', methods=['PUT'])
+def update_brew(brew_id):
+    success = False
+    note = request.get_json()
+    brew = mongo.db.brews.find_one(ObjectId(brew_id))
+
+    if brew and 'note' in note:
+        brew['note'] = note['note']
+        d = {'_id': ObjectId(brew['_id'])}
+        print mongo.db.brews.update(d, brew, True)
+        success = True
+
+    return jsonify(success=success)
+
+
 @app.route('/api/brews/<brew_id>/temperature', methods=['GET'])
 def brew_temperature(brew_id):
     brew = mongo.db.brews.find_one(ObjectId(brew_id))
