@@ -97,10 +97,7 @@ class DummyController(object):
         """Create a new dummy controller with a given temperature slope in
         degree celsius per minute and a current temperature in degree
         celsius."""
-        slope = 2.0
-
-        if 'BREW_CONTROLLER_DUMMY_SLOPE' in app.config:
-            slope = float(app.config['BREW_CONTROLLER_DUMMY_SLOPE'])
+        slope = 5.0
 
         # Adjust the slope to degree per sec
         self._slope = slope / 60.0
