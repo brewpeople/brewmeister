@@ -2,8 +2,9 @@
 
 import sys
 import os
+from pkg_resources import get_distribution
 
-VERSION = '0.1.0dev'
+dist = get_distribution('brewmeister')
 
 extensions = ['sphinxcontrib.httpdomain']
 
@@ -14,8 +15,8 @@ master_doc = 'index'
 
 project = u'Brewmeister'
 copyright = u'2013, Matthias Vogelgesang'
-version = VERSION
-release = VERSION
+version = dist.version
+release = dist.version
 
 exclude_patterns = ['_build']
 pygments_style = 'sphinx'

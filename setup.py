@@ -1,5 +1,6 @@
 from setuptools import setup, find_packages
-from docs.conf import VERSION
+
+VERSION = '0.1.0dev'
 
 setup(
     name='Brewmeister',
