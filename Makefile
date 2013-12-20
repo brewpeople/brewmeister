@@ -5,7 +5,7 @@ ALL_LINGUAS=cs de
 POFILES=$(shell LINGUAS="$(ALL_LINGUAS)"; DIR="$(TRANSLATIONS)"; for lang in $$LINGUAS; do printf "$$DIR/$$lang/LC_MESSAGES/messages.po "; done)
 MOFILES=$(patsubst %.po,%.mo,$(POFILES))
 
-.PHONY: createpo init run updatepo updatepot
+.PHONY: createpo init install run updatepo updatepot
 
 all: run
 
@@ -14,6 +14,9 @@ run: $(MOFILES)
 
 init:
 	@python manage.py populatedb
+
+install:
+	@python setup.py install
 
 createpo: $(MESSAGES)
 	@echo "\n>>> Enter language code"; read lang_code; pybabel init -i $(MESSAGES) -d $(TRANSLATIONS) -l $$lang_code
