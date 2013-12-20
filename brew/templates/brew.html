@@ -61,12 +61,17 @@
       });
     }
 
+    function disablePanicButton() {
+      $("#panic-button").prop('disabled', true);
+    }
+
     function update() {
       if (go_to_index)
         window.location.replace("/");
 
       $.getJSON('/api/status', function (data) {
         if (data.state == "preparing") {
+          disablePanicButton();
           checkSelector(old_selector);
           return false;
         }
@@ -107,7 +112,7 @@
     });
 
     $("#panic-button").click(function() {
-      $("#panic-button").prop('disabled', true);
+      disablePanicButton();
       $.post('/stop');
       go_to_index = true;
     });
@@ -152,10 +157,6 @@
     </div>
 
     <div class="span4">
-      <p>
-      </p>
-
-        <p></p>
       <table class="table table-hover">
         <tbody>
           <tr>
