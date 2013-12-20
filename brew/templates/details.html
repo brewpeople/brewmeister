@@ -19,20 +19,16 @@
 
 <div class="row">
   <div class="span12">
-    <dl>
-      <dt>{% trans %}When{% endtrans %}</dt>
-      <dd>{{ brew.date | dateformat }}</dd>
+    <h3>{% trans %}When{% endtrans %}</h3>
+    <p>{{ brew.date | dateformat }}</p>
 
-      <dt>{% trans %}Who{% endtrans %}</dt>
-      <dd>{{ brew.brewers | join(', ') }}</dd>
-    </dl>
+    <h3>{% trans %}Who{% endtrans %}</h3>
+    <p>{{ brew.brewers | join(', ') }}</p>
+
+    <h3>{% trans %}Notes{% endtrans %}</h3>
     <p>{{ brew.note }}</p>
-  </div>
-</div>
 
-<div class="row">
-  <div class="span12">
-  <h3>{% trans %}Temperature trend{% endtrans %}</h3>
+    <h3>{% trans %}Temperature trend{% endtrans %}</h3>
     <div id="temperature-chart" style="width: 500px; height: 400px"></div>
   </div>
 </div>
