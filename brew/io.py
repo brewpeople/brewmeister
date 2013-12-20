@@ -36,7 +36,6 @@ class ArduinoController(object):
 
     def reconnect(self):
         try:
-            print "reconnect"
             self.conn = serial.Serial(self.filename)
         except OSError as exception:
             self.conn = None
