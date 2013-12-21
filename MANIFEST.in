@@ -1,4 +1,5 @@
 recursive-include brew/templates *
 recursive-include brew/static *
 recursive-include brew/translations *.po
+recursive-include brew/data *
 include README.rst
