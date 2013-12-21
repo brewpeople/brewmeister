@@ -1,5 +1,6 @@
 import uuid
 import datetime
+from docutils.core import publish_parts
 from flask import request, render_template, redirect, url_for
 from flask.ext.babel import format_datetime
 from bson.json_util import dumps
@@ -23,6 +24,12 @@ def get_locale():
 def datetime_filter(value):
     fmt = "EE, dd.MM.y"
     return format_datetime(value, fmt)
+
+
+@app.template_filter('rst2html')
+def rst_filter(value):
+    parts = publish_parts(value, writer_name='html')
+    return parts['fragment']
 
 
 def create_brew(recipe_id, amount, brewers):

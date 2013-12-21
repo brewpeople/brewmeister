@@ -1,3 +1,4 @@
+docutils
 Flask
 Flask-Babel
 Flask-Cache

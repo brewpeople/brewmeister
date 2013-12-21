@@ -26,7 +26,7 @@
     <p>{{ brew.brewers | join(', ') }}</p>
 
     <h3>{% trans %}Notes{% endtrans %}</h3>
-    <p>{{ brew.note }}</p>
+    <p>{{ brew.note | rst2html | safe }}</p>
 
     <h3>{% trans %}Temperature trend{% endtrans %}</h3>
     <div id="temperature-chart" style="width: 500px; height: 400px"></div>
