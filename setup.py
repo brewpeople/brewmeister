@@ -1,6 +1,20 @@
+import os
+import glob
 from setuptools import setup, find_packages
 
+
 VERSION = '0.1.0dev'
+
+
+def mo_files():
+    linguas = glob.glob('brew/translations/*/LC_MESSAGES/messages.mo')
+    lpaths = [os.path.dirname(d) for d in linguas]
+    return zip(lpaths, [[l] for l in linguas])
+
+
+# Data files to be installed after build time
+data_files = mo_files()
+
 
 setup(
     name='Brewmeister',
@@ -10,6 +24,7 @@ setup(
     include_package_data=True,
     zip_safe=False,
     scripts=['bin/brewmeister'],
+    data_files=data_files,
     install_requires=[
         'Babel>=1.3',
         'docutils>=0.11',
