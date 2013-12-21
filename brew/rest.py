@@ -1,6 +1,6 @@
 import time
 import jsonschema
-from flask import request, jsonify, make_response
+from flask import request, jsonify, make_response, abort
 from bson.objectid import ObjectId
 from brew import app, controller, machine, mongo
 from schema import loadd as load_schema
@@ -23,8 +23,9 @@ def recipe(recipe_id=None):
     elif request.method == 'PUT':
         d = {'_id': ObjectId(recipe_id)}
         mongo.db.recipes.update(d, recipe_json, False)
+        return "", 201
 
-    return jsonify(success=True)
+    return "", 200
 
 
 @app.route('/api/brews', methods=['GET'])
@@ -38,33 +39,37 @@ def get_brew_details(brew_id):
     # Lame attempt to avoid serialization of the _id
     brew = mongo.db.brews.find_one(ObjectId(brew_id))
 
-    if brew:
-        data = {k: v for k, v in brew.items() if k != '_id'}
-        return jsonify(data)
+    if not brew:
+        abort(401)
 
-    return jsonify(success=False)
+    return jsonify({k: v for k, v in brew.items() if k != '_id'})
 
 
 @app.route('/api/brews/<brew_id>/note', methods=['PUT'])
 def update_brew(brew_id):
-    success = False
     note = request.get_json()
     brew = mongo.db.brews.find_one(ObjectId(brew_id))
 
-    if brew and 'note' in note:
-        brew['note'] = note['note']
-        d = {'_id': ObjectId(brew['_id'])}
-        print mongo.db.brews.update(d, brew, True)
-        success = True
+    if not 'note' in note:
+        abort(400)
 
-    return jsonify(success=success)
+    if not brew:
+        abort(401)
+
+    brew['note'] = note['note']
+    d = {'_id': ObjectId(brew['_id'])}
+    mongo.db.brews.update(d, brew, True)
+    return "", 201
 
 
 @app.route('/api/brews/<brew_id>/temperature', methods=['GET'])
 def brew_temperature(brew_id):
     brew = mongo.db.brews.find_one(ObjectId(brew_id))
-    temperatures = [(int(t * 1000), temp)
-                    for (t, temp) in brew['temperatures']]
+
+    if not brew:
+        abort(401)
+
+    temperatures = [(int(t * 1000), temp) for (t, temp) in brew['temperatures']]
     return jsonify(temperatures=temperatures)
 
 
@@ -80,7 +85,7 @@ def get_brew_label(brew_id):
 @app.route('/api/brews/<brew_id>/label/prepare', methods=['GET'])
 def prepare_brew_label(brew_id):
     output = make_pdf('http://127.0.0.1/view/{}'.format(brew_id))
-    return jsonify(success=True)
+    return "", 201
 
 
 @app.route('/api/status', methods=['GET'])
@@ -96,29 +101,31 @@ def status():
 
 @app.route('/api/status/<device>', methods=['GET'])
 def device_status(device):
-    if hasattr(controller, device):
-        return jsonify(status=getattr(controller, device), success=True)
+    if not hasattr(controller, device):
+        abort(401)
 
-    return jsonify(success=False)
+    return jsonify(status=getattr(controller, device))
 
 
 @app.route('/api/start/<device>', methods=['PUT'])
 def start(device):
-    if hasattr(controller, device):
-        setattr(controller, device, True)
+    if not hasattr(controller, device):
+        abort(401)
 
-    return jsonify(success=True)
+    setattr(controller, device, True)
+    return ""
 
 
 @app.route('/api/stop/<device>', methods=['PUT'])
 def stop(device):
-    if hasattr(controller, device):
-        setattr(controller, device, False)
+    if not hasattr(controller, device):
+        abort(401)
 
-    return jsonify(success=True)
+    setattr(controller, device, False)
+    return ""
 
 
 @app.route('/api/reconnect', methods=['PUT'])
 def reconnect():
     controller.reconnect()
-    return jsonify(success=controller.connected)
+    return jsonify(connected=controller.connected)
