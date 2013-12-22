@@ -44,7 +44,7 @@ def create_brew(recipe_id, amount, brewers):
                          state=''))
 
     brew = dict(recipe=recipe['name'], recipe_id=recipe_id,
-                mash=mash, date=datetime.datetime.now(),
+                mash=mash, date=datetime.datetime.now(), note="",
                 amount=amount, brewers=brewers, temperatures=[])
 
     mongo.db.brews.insert(brew)
