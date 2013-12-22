@@ -8,6 +8,7 @@ from brew.state import Machine
 
 app = Flask(__name__)
 app.config.from_object('brew.settings')
+app.config.from_pyfile('brewmeister.cfg', silent=True)
 
 babel = Babel(app)
 cache = Cache(app)
