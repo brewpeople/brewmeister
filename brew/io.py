@@ -4,12 +4,12 @@ import serial
 import struct
 
 
-COMMAND_GET = 0xf0
-COMMAND_SET = 0xf1
+COMMAND_GET = struct.pack('B', 0xf0)
+COMMAND_SET = struct.pack('B', 0xf1)
 
-DS18B20 = 0xf1
-HEATER = 0xf2
-STIRRER = 0xf3
+DS18B20 = struct.pack('B', 0xf1)
+HEATER = struct.pack('B', 0xf2)
+STIRRER = struct.pack('B', 0xf3)
 
 
 def TemperatureController(app):
@@ -26,7 +26,9 @@ def TemperatureController(app):
 class ArduinoController(object):
 
     def __init__(self, app, connection=None):
+        self._last_temperature = 0.0
         self.filename = app.config.get('BREW_CONTROLLER_ARDUINO_DEVICE', '/dev/ttyUSB0')
+        self.app = app
         self.status = None
         self.reconnect()
 
@@ -36,14 +38,15 @@ class ArduinoController(object):
 
     def reconnect(self):
         try:
-            self.conn = serial.Serial(self.filename)
+            self.conn = serial.Serial(self.filename, timeout=2)
+            self.status = ""
         except OSError as exception:
             self.conn = None
             self.status = str(exception)
 
     def send_header(self, command, device):
-        self.conn.write(struct.pack('B', command))
-        self.conn.write(struct.pack('B', device))
+        self.conn.write(command)
+        self.conn.write(device)
 
     def write_boolean(self, device, value):
         if self.connected:
@@ -53,7 +56,12 @@ class ArduinoController(object):
     def read_boolean(self, device):
         if self.connected:
             self.send_header(COMMAND_GET, device)
-            return struct.unpack('?', self.conn.read(1))[0]
+            data = self.conn.read(1)
+
+            if data:
+                return struct.unpack('?', data)[0]
+
+        raise IOError("Could not read boolean")
 
     def write_float(self, device, value):
         if self.connected:
@@ -63,33 +71,45 @@ class ArduinoController(object):
     def read_float(self, device):
         if self.connected:
             self.send_header(COMMAND_GET, device)
-            return struct.unpack('f', self.conn.read(4))[0]
+            data = self.conn.read(4)
+
+            if data and len(data) == 4:
+                return struct.unpack('f', data)[0]
+
+        raise IOError("Could not read float")
 
     @property
     def temperature(self):
-        if not self.connected:
-            return 0.0
-
-        return self.read_float(DS18B20)
+        try:
+            self._last_temperature = self.read_float(DS18B20)
+        except serial.SerialException as exception:
+            self.app.logger.info("Serial connection problem: {}".format(str(exception)))
+        except IOError as exception:
+            self.app.logger.info("Read problem: {}".format(str(exception)))
+        return self._last_temperature
 
     def set_reference_temperature(self, temperature):
         self.write_float(DS18B20, temperature)
 
     @property
     def heating(self):
-        return self.read_boolean(HEATER)
+        # return self.read_boolean(HEATER)
+        return False
 
     @heating.setter
     def heating(self, value):
-        self.write_boolean(HEATER, value)
+        # self.write_boolean(HEATER, value)
+        pass
 
     @property
     def stirring(self):
-        return self.read_boolean(STIRRER)
+        # return self.read_boolean(STIRRER)
+        return False
 
     @stirring.setter
     def stirring(self, value):
-        self.write_boolean(STIRRER, value)
+        # self.write_boolean(STIRRER, value)
+        pass
 
 
 class DummyController(object):
