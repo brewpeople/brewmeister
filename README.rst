@@ -3,7 +3,9 @@ Brewmeister
 
 Brewmeister is a server application to organize and control `beer brewing
 processes <http://en.wikipedia.org/wiki/Brewing>`_. It provides an HTML
-interface for human brewers and a REST-API for machine consumption.
+interface for human brewers and a REST-API for machine consumption. It also
+works perfectly nice with its `Brewslave
+<https://github.com/maximweb/brewslave>`_ minion.
 
 
 Features
