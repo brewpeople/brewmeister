@@ -96,6 +96,7 @@ def status():
                    connected=controller.connected,
                    heating=controller.heating,
                    stirring=controller.stirring,
+                   slope=controller.slope,
                    temperature=controller.temperature)
 
 
