@@ -66,27 +66,27 @@
     function disablePanicButton() {
       $("#panic-button").prop('disabled', true);
     }
-    
+
     function TemperatureModel() {
-        this.temperature = ko.observable();
-        this.slope = ko.observable("1.2344534");
-        
-        this.formatTemperature = function(value) {
-            tmp = parseFloat(value);
-            return tmp.toFixed(1) + "°C";
-        }
-        
-        this.formattedTemperature = ko.computed(function() {
-            tmp = parseFloat(this.temperature());   
-            slp = parseFloat(this.slope());   
-            return this.formatTemperature(tmp) + " (" + this.formatTemperature(slp) + "/min)" ;
-        }, this);
+      this.temperature = ko.observable();
+      this.slope = ko.observable("1.2344534");
+
+      function formatTemperature(value) {
+        return value.toFixed(1);
+      }
+
+      this.formattedTemperature = ko.computed(function() {
+        return formatTemperature(parseFloat(this.temperature()));
+      }, this);
+
+      this.formattedSlope = ko.computed(function() {
+        return formatTemperature(parseFloat(this.slope()));
+      }, this);
     }
-    
-    theTempModel = new TemperatureModel();
-    
-    ko.applyBindings( theTempModel );
-    
+
+    temperatureModel = new TemperatureModel();
+    ko.applyBindings(temperatureModel);
+
     function update() {
       /* Check if we pressed the stop button */
       if (go_to_index)
@@ -94,10 +94,9 @@
 
       /* Check hardware and brewing status */
       $.getJSON('/api/status', function (data) {
-          
-          theTempModel.temperature(data.temperature);
-          theTempModel.slope(data.slope);
-          
+        temperatureModel.temperature(data.temperature);
+        temperatureModel.slope(data.slope);
+
         if (data.state == "preparing") {
           disablePanicButton();
           checkSelector(old_selector);
@@ -135,8 +134,6 @@
       });
 
       /* Check notes */
-      console.log($('#user-notes').val());
-
       if ($('#user-notes').val() != old_text) {
         old_text = $('#user-notes').val();
 
@@ -161,7 +158,6 @@
     });
 
     update();
-    
   });
 </script>
   <h2>{% trans %}Mashing{% endtrans %}</h2>
@@ -204,11 +200,13 @@
       <table class="table table-hover">
         <tbody>
           <tr>
-            <td>{% trans %}Temperature (slope){% endtrans %}</td>
-            <td><span data-bind="text: formattedTemperature"></td>
+            <td>{% trans %}Temperature{% endtrans %}</td>
+            <td><span data-bind="text: formattedTemperature"></span> °C
+                <small>(<span data-bind="text: formattedSlope"></span>{% trans %} °C / min{% endtrans %})</small>
+            </td>
           </tr>
           <tr>
-            <td>{% trans %}Temperature{% endtrans %}</td>
+            <td>{% trans %}Update{% endtrans %}</td>
             <td>
               <div id="update-switch" class="make-switch switch-small"
                 data-on="default" data-off="default"
