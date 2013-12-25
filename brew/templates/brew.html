@@ -4,6 +4,7 @@
 <script type="text/javascript" src="{{ url_for('static', filename='js/flot/jquery.flot.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/flot/jquery.flot.time.min.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/bootstrap/bootstrap-switch.js') }}"></script>
+<script type="text/javascript" src="{{ url_for('static', filename='js/knockout/knockout-3.0.0.js') }}"></script>
 <script type="text/javascript">
   $(document).ready(function() {
     var temperatures = [];
@@ -65,7 +66,27 @@
     function disablePanicButton() {
       $("#panic-button").prop('disabled', true);
     }
-
+    
+    function TemperatureModel() {
+        this.temperature = ko.observable();
+        this.slope = ko.observable("1.2344534");
+        
+        this.formatTemperature = function(value) {
+            tmp = parseFloat(value);
+            return tmp.toFixed(1) + "°C";
+        }
+        
+        this.formattedTemperature = ko.computed(function() {
+            tmp = parseFloat(this.temperature());   
+            slp = parseFloat(this.slope());   
+            return this.formatTemperature(tmp) + " (" + this.formatTemperature(slp) + "/min)" ;
+        }, this);
+    }
+    
+    theTempModel = new TemperatureModel();
+    
+    ko.applyBindings( theTempModel );
+    
     function update() {
       /* Check if we pressed the stop button */
       if (go_to_index)
@@ -73,6 +94,10 @@
 
       /* Check hardware and brewing status */
       $.getJSON('/api/status', function (data) {
+          
+          theTempModel.temperature(data.temperature);
+          theTempModel.slope(data.slope);
+          
         if (data.state == "preparing") {
           disablePanicButton();
           checkSelector(old_selector);
@@ -136,6 +161,7 @@
     });
 
     update();
+    
   });
 </script>
   <h2>{% trans %}Mashing{% endtrans %}</h2>
@@ -177,6 +203,10 @@
     <div class="span4">
       <table class="table table-hover">
         <tbody>
+          <tr>
+            <td>{% trans %}Temperature (slope){% endtrans %}</td>
+            <td><span data-bind="text: formattedTemperature"></td>
+          </tr>
           <tr>
             <td>{% trans %}Temperature{% endtrans %}</td>
             <td>

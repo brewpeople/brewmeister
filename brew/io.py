@@ -88,6 +88,10 @@ class ArduinoController(object):
             self.app.logger.info("Read problem: {}".format(str(exception)))
         return self._last_temperature
 
+    @property
+    def slope(self):
+        return 0.0
+
     def set_reference_temperature(self, temperature):
         self.write_float(DS18B20, temperature)
 
@@ -131,6 +135,10 @@ class DummyController(object):
 
     def reconnect(self):
         self.connected = True
+
+    @property
+    def slope(self):
+        return self._slope * 60.0 if self.heating else 0
 
     @property
     def temperature(self):
