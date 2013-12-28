@@ -12,12 +12,12 @@
                  yaxis: { min: 10, max: 80 },
                  xaxis: { mode: "time", timeformat: "%H:%M" } };
     var plot = $.plot($("#temperature-chart"), [ temperatures ], opts);
-    var do_plot = true;
-    var old_selector = "";
-    var old_text = "";
-    var go_to_index = false;
+    var doPlot = true;
+    var oldSelector = "";
+    var oldText = "";
+    var doReturn = false;
 
-    function set_row_status(selector, fa_icon) {
+    function setRowStatus(selector, fa_icon) {
       $(selector + " td:nth-child(4)").html("<i class='fa " + fa_icon + "'></i>");
     }
 
@@ -25,7 +25,7 @@
       if (selector != "") {
         $(selector).removeClass("warning");
         $(selector).addClass("success");
-        set_row_status(selector, 'fa-check');
+        setRowStatus(selector, 'fa-check');
       }
     }
 
@@ -43,7 +43,7 @@
           return false;
 
         $(this).addClass("success");
-        set_row_status("#" + this.id, 'fa-check');
+        setRowStatus("#" + this.id, 'fa-check');
       });
     });
 
@@ -89,7 +89,7 @@
 
     function update() {
       /* Check if we pressed the stop button */
-      if (go_to_index)
+      if (doReturn)
         window.location.replace("/");
 
       /* Check hardware and brewing status */
@@ -99,29 +99,29 @@
 
         if (data.state == "preparing") {
           disablePanicButton();
-          checkSelector(old_selector);
+          checkSelector(oldSelector);
           return false;
         }
 
-        var row_selector = "#" + data.step.id;
+        var rowSelector = "#" + data.step.id;
 
-        if (old_selector != row_selector) {
-          checkSelector(old_selector);
-          $(row_selector).addClass("warning");
-          old_selector = row_selector;
+        if (oldSelector != rowSelector) {
+          checkSelector(oldSelector);
+          $(rowSelector).addClass("warning");
+          oldSelector = rowSelector;
         }
 
         switch (data.state) {
           case "heating":
-            set_row_status(row_selector, 'fa-fire');
+            setRowStatus(rowSelector, 'fa-fire');
             break;
 
           case "resting":
-            set_row_status(row_selector, 'fa-clock-o');
+            setRowStatus(rowSelector, 'fa-clock-o');
             break;
         }
 
-        if (do_plot) {
+        if (doPlot) {
           temperatures.push([data.timestamp, data.temperature]);
           plot.setData([ temperatures ]);
 
@@ -134,12 +134,12 @@
       });
 
       /* Check notes */
-      if ($('#user-notes').val() != old_text) {
-        old_text = $('#user-notes').val();
+      if ($('#user-notes').val() != oldText) {
+        oldText = $('#user-notes').val();
 
         $.ajax({
           url: '/api/brews/{{ brew._id }}/note',
-          data: JSON.stringify({ note: old_text }),
+          data: JSON.stringify({ note: oldText }),
           dataType: "json",
           contentType: "application/json; charset=utf-8",
           type: "PUT",
@@ -148,13 +148,13 @@
     }
 
     $('#update-switch').on('switch-change', function (e, data) {
-      do_plot = data.value;
+      doPlot = data.value;
     });
 
     $("#panic-button").click(function() {
       disablePanicButton();
       $.post('/stop');
-      go_to_index = true;
+      doReturn = true;
     });
 
     update();
