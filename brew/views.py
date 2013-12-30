@@ -5,13 +5,11 @@ from flask import request, render_template, redirect, url_for
 from flask.ext.babel import format_datetime
 from bson.json_util import dumps
 from bson.objectid import ObjectId
-from brew import app, babel, controller, machine, mongo
-from brew.monitor import Monitor
+from brew import app, babel, controller, machine, mongo, monitor
 from schema import loads as load_schema
 
 
 current_brew = None
-monitor = Monitor()
 LANG_CODES = ['en', 'de', 'cs']
 
 
@@ -96,7 +94,7 @@ def brews_view():
         amount = float(request.form['amount'])
         current_brew = create_brew(recipe_id, amount, brewers)
 
-        monitor.temperature(current_brew['_id'])
+        monitor.start(current_brew['_id'])
         machine.reset()
 
         for step in current_brew['mash']:

@@ -2,7 +2,7 @@ import time
 import jsonschema
 from flask import request, jsonify, make_response, abort
 from bson.objectid import ObjectId
-from brew import app, controller, machine, mongo
+from brew import app, controller, machine, mongo, monitor
 from schema import loadd as load_schema
 from qr import make_pdf
 
@@ -97,7 +97,7 @@ def status():
                    heating=controller.heating,
                    stirring=controller.stirring,
                    slope=controller.slope,
-                   temperature=controller.temperature)
+                   temperature=monitor.temperature)
 
 
 @app.route('/api/status/<device>', methods=['GET'])

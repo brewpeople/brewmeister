@@ -2,6 +2,7 @@ import datetime
 import random
 import serial
 import struct
+import threading
 
 
 COMMAND_GET = struct.pack('B', 0xf0)
@@ -167,3 +168,35 @@ class DummyController(object):
 
     def set_reference_temperature(self, temperature):
         self._set_temperature = temperature
+
+
+class Monitor(object):
+    def __init__(self, controller, record_func, timeout=5):
+        self.thread = None
+        self.exit_event = None
+        self.timeout = timeout
+        self.temperature = controller.temperature
+        self.controller = controller
+        self.record_func = record_func
+
+    def start(self, brew_id):
+        if self.thread:
+            raise RuntimeError("Brew still ongoing")
+
+        def run_in_background():
+            while True:
+                if self.exit_event.wait(self.timeout):
+                    break
+
+                self.temperature = self.controller.temperature
+                self.record_func(brew_id, self.temperature)
+
+
+        self.exit_event = threading.Event()
+        self.thread = threading.Thread(target=run_in_background)
+        self.thread.start()
+
+    def stop(self):
+        self.exit_event.set()
+        self.thread.join()
+        self.thread = None
