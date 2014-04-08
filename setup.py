@@ -27,6 +27,7 @@ setup(
     data_files=data_files,
     install_requires=[
         'Babel>=1.3',
+        'crcmod>=1.7',
         'docutils>=0.11',
         'Flask>=0.10.1',
         'Flask-Babel>=0.9',

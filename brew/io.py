@@ -1,8 +1,9 @@
-import datetime
+import time
 import random
 import serial
 import struct
 import threading
+import crcmod
 
 
 COMMAND_GET = struct.pack('B', 0xf0)
@@ -11,6 +12,10 @@ COMMAND_SET = struct.pack('B', 0xf1)
 DS18B20 = struct.pack('B', 0xf1)
 HEATER = struct.pack('B', 0xf2)
 STIRRER = struct.pack('B', 0xf3)
+
+
+# Contrary to crcmod's definition, brewslave expects a bit-reversed CRC
+crc8 = crcmod.mkCrcFun(0x131, 0, False, 0)
 
 
 def TemperatureController(app):
@@ -24,13 +29,66 @@ def TemperatureController(app):
     raise ValueError("Unknown controller type")
 
 
-class ArduinoController(object):
+class Controller(object):
+    def __init__(self, app, ttl=5):
+        self.app = app
+        self._last_times = (0, 0)
+        self._last_temperatures = (0, 0)
+        self._ttl = ttl
 
-    def __init__(self, app, connection=None):
-        self._last_temperature = 0.0
+    def reconnect(self):
+        raise NotImplementedError
+
+    @property
+    def connected(self):
+        raise NotImplementedError
+
+    @property
+    def slope(self):
+        """Return temperature slope in degree Celsius per Minute"""
+        time_first, time_second = self._last_times
+        temp_first, temp_second = self._last_temperatures
+        elapsed = time_second - time_first
+        delta = temp_second - temp_first
+
+        if elapsed > 0:
+            return delta / elapsed * 60.0
+
+        return 0
+
+    @property
+    def temperature(self):
+        """Temperature in degree celsius"""
+        current_time = time.time()
+
+        if current_time < self._last_times[1] + self._ttl:
+            return self._last_temperatures[1]
+
+        try:
+            temperature = self._read_temperature()
+
+            if temperature:
+                self._last_temperatures = (self._last_temperatures[1], temperature)
+                self._last_times = (self._last_times[1], current_time)
+        except IOError as error:
+            self.app.log.warning(str(error))
+
+        return self._last_temperatures[1]
+
+    def _read_temperature(self):
+        raise NotImplementedError
+
+
+class ArduinoController(Controller):
+
+    def __init__(self, app):
+        super(ArduinoController, self).__init__(app)
         self.filename = app.config.get('BREW_CONTROLLER_ARDUINO_DEVICE', '/dev/ttyUSB0')
         self.app = app
         self.status = None
+        self._lock = threading.Lock()
+        self._heating = False
+        self._stirring = False
         self.reconnect()
 
     @property
@@ -39,121 +97,152 @@ class ArduinoController(object):
 
     def reconnect(self):
         try:
-            self.conn = serial.Serial(self.filename, timeout=2)
+            self.conn = serial.Serial(self.filename, timeout=2, baudrate=115200)
             self.status = ""
         except OSError as exception:
             self.conn = None
             self.status = str(exception)
 
-    def send_header(self, command, device):
-        self.conn.write(command)
-        self.conn.write(device)
+    def _send_packet(self, command, device, payload_fmt=None, *payload):
+        if not payload:
+            packet = struct.pack('ssBBBB', command, device, 0, 0, 0, 0)
+        else:
+            packet = struct.pack('ss{}'.format(payload_fmt), command, device, *payload)
 
-    def write_boolean(self, device, value):
+        checksum = struct.pack('B', crc8(packet))
+        self.conn.write(packet)
+        self.conn.write(checksum)
+
+    def _write_checked(self, device, payload_fmt, *payload):
         if self.connected:
-            self.send_header(COMMAND_SET, device)
-            self.conn.write(struct.pack('?', value))
+            try:
+                self._lock.acquire()
+                self._send_packet(COMMAND_SET, device, payload_fmt, *payload)
 
-    def read_boolean(self, device):
-        if self.connected:
-            self.send_header(COMMAND_GET, device)
-            data = self.conn.read(1)
+                # Read ack byte
+                data = self.conn.read(1)
+            finally:
+                self._lock.release()
+        else:
+            raise IOError("Not connected")
 
-            if data:
-                return struct.unpack('?', data)[0]
+    def _read_checked(self, device, num_bytes=7):
+        if not self.connected:
+            raise IOError("Not connected")
 
-        raise IOError("Could not read boolean")
-
-    def write_float(self, device, value):
-        if self.connected:
-            self.send_header(COMMAND_SET, device)
-            self.conn.write(struct.pack('f', value))
-
-    def read_float(self, device):
-        if self.connected:
-            self.send_header(COMMAND_GET, device)
-            data = self.conn.read(4)
-
-            if data and len(data) == 4:
-                return struct.unpack('f', data)[0]
-
-        raise IOError("Could not read float")
-
-    @property
-    def temperature(self):
         try:
-            self._last_temperature = self.read_float(DS18B20)
-        except serial.SerialException as exception:
-            self.app.logger.info("Serial connection problem: {}".format(str(exception)))
-        except IOError as exception:
-            self.app.logger.info("Read problem: {}".format(str(exception)))
-        return self._last_temperature
+            self._lock.acquire()
+            self._send_packet(COMMAND_GET, device)
+            data = self.conn.read(num_bytes)
 
-    @property
-    def slope(self):
-        return 0.0
+            if not data:
+                raise IOError("Received no data")
+
+            if len(data) != num_bytes:
+                raise IOError("Received {} != {} bytes".format(len(data), num_bytes))
+
+            checksum = struct.unpack('B', data[6])[0]
+            expected = crc8(data[:6])
+
+            if checksum != expected:
+                raise IOError("Checksum {} does not match {}".format(checksum, expected))
+
+            return data
+        finally:
+            self._lock.release()
+
+    def _read_boolean(self, device):
+        data = self._read_checked(device)
+        received_device, result = struct.unpack('BB', data[0:2])
+        return result != 0
+
+    def _read_float(self, device):
+        data = self._read_checked(device)
+        received_device, status = struct.unpack('BB', data[0:2])
+        result = struct.unpack('f', data[2:6])[0]
+        return result
+
+    def _write_boolean(self, device, value):
+        self._write_checked(device, '?BBB', value, 0, 0, 0)
+
+    def _write_float(self, device, value):
+        self._write_checked(device, 'f', value)
+
+    def _read_temperature(self):
+        try:
+            return self._read_float(DS18B20)
+        except serial.SerialException as exception:
+            self.app.logger.warning("Serial connection problem: {}".format(str(exception)))
+        except IOError as exception:
+            self.app.logger.warning("temperature: {}".format(str(exception)))
 
     def set_reference_temperature(self, temperature):
-        self.write_float(DS18B20, temperature)
+        is_set = False
+
+        while not is_set:
+            try:
+                self._write_float(DS18B20, temperature)
+                is_set = True
+            except IOError as exception:
+                time.sleep(0.5)
 
     @property
     def heating(self):
-        # return self.read_boolean(HEATER)
-        return False
+        try:
+            self._heating = self._read_boolean(HEATER)
+        except IOError as exception:
+            self.app.logger.warning("heating: {}".format(str(exception)))
+
+        return self._heating
 
     @heating.setter
     def heating(self, value):
-        # self.write_boolean(HEATER, value)
-        pass
+        self._write_boolean(HEATER, value)
 
     @property
     def stirring(self):
-        # return self.read_boolean(STIRRER)
-        return False
+        try:
+            self._stirring = self._read_boolean(STIRRER)
+        except IOError as exception:
+            self.app.logger.warning("stirring: {}".format(str(exception)))
+
+        return self._stirring
 
     @stirring.setter
     def stirring(self, value):
-        # self.write_boolean(STIRRER, value)
-        pass
+        self._write_boolean(STIRRER, value)
 
 
-class DummyController(object):
+class DummyController(Controller):
     def __init__(self, app, current_temperature=20.0):
         """Create a new dummy controller with a given temperature slope in
         degree celsius per minute and a current temperature in degree
         celsius."""
-        slope = 5.0
+        super(DummyController, self).__init__(app)
 
         # Adjust the slope to degree per sec
-        self._slope = slope / 60.0
         self._set_temperature = current_temperature
         self._last_temperature = current_temperature
-        self._last_time = datetime.datetime.now()
+        self._last_time = time.time()
 
+        self._slope = 5 / 60.
         self.heating = False
         self.stirring = False
-        self.connected = False
 
     def reconnect(self):
-        self.connected = True
+        pass
 
     @property
-    def slope(self):
-        return self._slope * 60.0 if self.heating else 0
+    def connected(self):
+        return True
 
-    @property
-    def temperature(self):
-        current_time = datetime.datetime.now()
-        elapsed = (current_time - self._last_time).total_seconds()
+    def _read_temperature(self):
+        current_time = time.time()
+        elapsed = current_time - self._last_time
         self._last_time = current_time
 
         if abs(self._last_temperature - self._set_temperature) < 0.1:
             return self._last_temperature
-
-        increase = elapsed * self._slope
-
-        # add some noise
-        increase += random.gauss(0.5, 0.1)
 
         # Okay, this is the worst controller *ever*
         if self._last_temperature > self._set_temperature:

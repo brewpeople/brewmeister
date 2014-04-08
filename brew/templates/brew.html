@@ -30,14 +30,13 @@
     }
 
     $.getJSON('/api/status', function (data) {
+      }).success(function () {
       var table = $("#steps");
 
-      /* Initialize temperatures */
       $.getJSON('/api/brews/{{ brew._id }}/temperature', function (data) {
         temperatures = data.temperatures;
       });
 
-      /* Set success for past steps */
       $("#steps > tbody > tr").each(function() {
         if (this.id == data.step.id)
           return false;
@@ -130,7 +129,7 @@
         }
 
         checkSwitch();
-        setTimeout(update, 2000);
+        setTimeout(update, 4000);
       });
 
       /* Check notes */
