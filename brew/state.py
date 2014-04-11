@@ -29,8 +29,8 @@ class Machine(object):
         current_temperature = self._controller.temperature
         self._controller.set_reference_temperature(target_temperature)
 
-        while abs(target_temperature - current_temperature) > 1.0:
-            if self._exit_event.wait(5):
+        while current_temperature - target_temperature < 1.0:
+            if self._exit_event.wait(2):
                 return
 
             self._controller.set_reference_temperature(target_temperature)

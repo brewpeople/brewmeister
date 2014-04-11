@@ -30,7 +30,7 @@ def TemperatureController(app):
 
 
 class Controller(object):
-    def __init__(self, app, ttl=5):
+    def __init__(self, app, ttl=2):
         self.app = app
         self._last_times = (0, 0)
         self._last_temperatures = (0, 0)
