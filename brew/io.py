@@ -4,6 +4,8 @@ import serial
 import struct
 import threading
 import crcmod
+import os
+import re
 
 
 COMMAND_GET = struct.pack('B', 0xf0)
@@ -83,8 +85,6 @@ class ArduinoController(Controller):
 
     def __init__(self, app):
         super(ArduinoController, self).__init__(app)
-        import os
-        import re
         for x in os.listdir('/dev'):
             if re.match(r"tty(ACM.|USB.|\.usbserial.*|\.usbmodem.*)", x):
                 device_address = '/dev/'+x
