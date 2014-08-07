@@ -4,6 +4,8 @@ import serial
 import struct
 import threading
 import crcmod
+import os
+import re
 
 
 COMMAND_GET = struct.pack('B', 0xf0)
@@ -83,7 +85,13 @@ class ArduinoController(Controller):
 
     def __init__(self, app):
         super(ArduinoController, self).__init__(app)
-        self.filename = app.config.get('BREW_CONTROLLER_ARDUINO_DEVICE', '/dev/ttyUSB0')
+        for x in os.listdir('/dev'):
+            if re.match(r"tty(ACM.|USB.|\.usbserial.*|\.usbmodem.*)", x):
+                device_address = '/dev/'+x
+                break
+            else:
+                device_address = 'none'
+        self.filename = app.config.get('BREW_CONTROLLER_ARDUINO_DEVICE', device_address)
         self.app = app
         self.status = None
         self._lock = threading.Lock()
