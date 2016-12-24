@@ -1,0 +1,24 @@
+.temperature-value {
+  font-family: 'Oswald', sans-serif;
+  font-size: 72pt;
+}
+
+.target-value {
+  font-family: 'Oswald', sans-serif;
+  font-size: 24pt;
+  color: #777;
+  margin-left: -1.2em;
+}
+
+.value-active {
+  color: #000;
+}
+
+.value-inactive {
+  color: #999;
+}
+
+.fix-buttons {
+  margin-left: 1em;
+  margin-bottom: 1em;
+}

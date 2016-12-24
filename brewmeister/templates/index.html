@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Brewmeister</title>
+
+    <link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet"> 
+    <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='css/widgets.css') }}" />
+    <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='css/font-awesome.min.css') }}">
+
+    <script src="{{ url_for('static', filename='js/vue.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/lodash.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/vue-resource.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/bootstrapVue.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/Chart.bundle.min.js') }}"></script>
+  </head>
+
+  <body>
+    {% raw %}
+    <div id="app" class="container">
+      <div class="row">
+        <div class="col-lg-6">
+          <span class="temperature-value">{{ niceTemperature }}&deg;</span> <span class="target-value">/ {{ niceTarget }}&deg;</span>
+          <div class="btn-group fix-buttons" role="group">
+            <button type="button" class="btn btn-secondary value-inactive" v-on:click="target -= 1">
+              <i class="fa fa-minus" aria-hidden="true"></i>
+            </button>
+            <button type="button" class="btn btn-secondary value-inactive" v-on:click="target += 1">
+              <i class="fa fa-plus" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <span class="temperature-value">{{ niceElapsed }}</span>
+          <div class="btn-group fix-buttons" role="group">
+            <button type="button" class="btn btn-secondary value-inactive"
+              v-on:click="resetTimer">
+              <i class="fa fa-play-circle" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-3">
+          <div id="heating-indicator"
+            v-bind:class="{ 'value-active': heating, 'value-inactive': !heating }">
+            <span class="temperature-value"></span>
+            <i class="fa fa-thermometer-empty fa-5x" aria-hidden="true"></i>
+            <button class="btn"
+              v-on:click="toggleHeating"
+              v-bind:class="{ 'btn-primary': heating, 'btn-secondary': !heating }">
+              <i class="fa fa-check" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <div id="stirring-indicator"
+            v-bind:class="{ 'value-active': stirring, 'value-inactive': !stirring }">
+            <span class="temperature-value"></span>
+            <i class="fa fa-bolt fa-5x" aria-hidden="true"></i>
+            <button class="btn"
+              v-on:click="toggleStirring"
+              v-bind:class="{ 'btn-primary': stirring, 'btn-secondary': !stirring }">
+              <i class="fa fa-check" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endraw %}
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  </body>
+</html>
