@@ -8,7 +8,6 @@ setup(
     long_description=open('README.rst').read(),
     packages=find_packages(),
     zip_safe=False,
-    scripts=['bin/brewmeister'],
     install_requires=[
         'crcmod>=1.7',
         'Flask>=0.10.1',
