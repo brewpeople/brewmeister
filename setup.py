@@ -13,5 +13,6 @@ setup(
         'Flask>=0.10.1',
         'Flask-RESTful>=0.3.5',
         'pyserial>=3.2.1',
+        'Flask-Script',
     ]
 )
