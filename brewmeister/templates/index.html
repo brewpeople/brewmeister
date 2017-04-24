@@ -20,9 +20,9 @@
 
   <body>
     {% raw %}
-    <div id="app" class="container">
+    <div class="container">
       <div class="row">
-        <div class="col-lg-6">
+        <div id="temperature" class="col-lg-12">
           <span class="temperature-value">{{ niceTemperature }}&deg;</span> <span class="target-value">/ {{ niceTarget }}&deg;</span>
           <div class="btn-group fix-buttons" role="group">
             <button type="button" class="btn btn-secondary value-inactive" v-on:click="target -= 1">
@@ -33,19 +33,10 @@
             </button>
           </div>
         </div>
-        <div class="col-lg-6">
-          <span class="temperature-value">{{ niceElapsed }}</span>
-          <div class="btn-group fix-buttons" role="group">
-            <button type="button" class="btn btn-secondary value-inactive"
-              v-on:click="resetTimer">
-              <i class="fa fa-play-circle" aria-hidden="true"></i>
-            </button>
-          </div>
-        </div>
       </div>
       <div class="row">
-        <div class="col-lg-3">
-          <div id="heating-indicator"
+        <div class="col-lg-12">
+          <div id="heating"
             v-bind:class="{ 'value-active': heating, 'value-inactive': !heating }">
             <span class="temperature-value"></span>
             <i class="fa fa-thermometer-empty fa-5x" aria-hidden="true"></i>
@@ -56,8 +47,10 @@
             </button>
           </div>
         </div>
-        <div class="col-lg-3">
-          <div id="stirring-indicator"
+      </div>
+      <div class="row">
+        <div class="col-lg-12">
+          <div id="stirring"
             v-bind:class="{ 'value-active': stirring, 'value-inactive': !stirring }">
             <span class="temperature-value"></span>
             <i class="fa fa-bolt fa-5x" aria-hidden="true"></i>

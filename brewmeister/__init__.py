@@ -9,12 +9,11 @@ app.config['DEBUG'] = True
 
 controller = Dummy(app)
 
-from brewmeister.resources import Temperature, Heating, Stirrer, Timer
+from brewmeister.resources import Temperature, Heating, Stirrer
 
 api = Api(app)
 api.add_resource(Temperature, '/api/v1/temperature')
 api.add_resource(Heating, '/api/v1/heating')
 api.add_resource(Stirrer, '/api/v1/stirrer')
-api.add_resource(Timer, '/api/v1/timer')
 
 import brewmeister.views

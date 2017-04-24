@@ -1,12 +1,8 @@
-var app = new Vue({
-    el: '#app',
+var temperatureController = new Vue({
+    el: '#temperature',
     data: {
       temperature: '',
       target: '',
-      heating: false,
-      stirring: false,
-      elapsed: 0,
-      timer: '',
     },
     computed: {
       niceTemperature: function () {
@@ -15,22 +11,6 @@ var app = new Vue({
       niceTarget: function () {
         return Math.round (this.target)
       },
-      niceElapsed: function () {
-        var hours = Math.floor(this.elapsed / 3600);
-        var minutes = Math.floor((this.elapsed - (hours * 3600)) / 60);
-        var seconds = Math.floor(this.elapsed - (hours * 3600) - (minutes * 60));
-
-        if (hours < 10)
-            hours = '0' + hours
-
-        if (minutes < 10)
-            minutes = '0' + minutes
-
-        if (seconds < 10)
-            seconds = '0' + seconds
-
-        return hours + ':' + minutes + ':' + seconds
-      }
     },
     watch: {
       target: function () {
@@ -38,30 +18,42 @@ var app = new Vue({
       }
     },
     methods: {
-      readStatus: function () {
+      readTemperature: function () {
         this.$http.get('/api/v1/temperature').then((response) => {
           return response.json()
         }).then((data) => {
           this.temperature = data.temperature
           this.target = data.target
         });
+      },
+      updateTarget: _.debounce(
+        function () {
+          this.$http.post('/api/v1/temperature', {target: this.target}).then((response) => {
+            this.readTemperature ()
+          }, (response) => {
+            // error callback
+          });
+        },
+        300
+      )
+    },
+    created: function () {
+      this.readTemperature ()
+      this.timer = setInterval (this.readTemperature, 2500)
+    }
+})
 
+var heatingController = new Vue({
+    el: '#heating',
+    data: {
+      heating: false,
+    },
+    methods: {
+      readStatus: function () {
         this.$http.get('/api/v1/heating').then((response) => {
           return response.json()
         }).then((data) => {
           this.heating = data
-        });
-
-        this.$http.get('/api/v1/stirrer').then((response) => {
-          return response.json()
-        }).then((data) => {
-          this.stirring = data
-        });
-
-        this.$http.get('/api/v1/timer').then((response) => {
-          return response.json()
-        }).then((data) => {
-          this.elapsed = data
         });
       },
       toggleHeating: function () {
@@ -71,6 +63,27 @@ var app = new Vue({
           // error callback
         });
       },
+    },
+    created: function () {
+      this.readStatus ()
+      this.timer = setInterval (this.readStatus, 5000)
+    }
+})
+
+
+var stirringController = new Vue({
+    el: '#stirring',
+    data: {
+      stirring: false,
+    },
+    methods: {
+      readStatus: function () {
+        this.$http.get('/api/v1/stirrer').then((response) => {
+          return response.json()
+        }).then((data) => {
+          this.stirring = data
+        });
+      },
       toggleStirring: function () {
         this.$http.post('/api/v1/stirrer', {on: !this.stirring}).then((response) => {
           this.readStatus ()
@@ -78,23 +91,6 @@ var app = new Vue({
           // error callback
         });
       },
-      resetTimer: function() {
-        this.$http.post('/api/v1/timer', {}).then((response) => {
-          // okay
-        }, (response) => {
-          // error callback
-        });
-      },
-      updateTarget: _.debounce(
-        function () {
-          this.$http.post('/api/v1/temperature', {target: this.target}).then((response) => {
-            this.readStatus ()
-          }, (response) => {
-            // error callback
-          });
-        },
-        300
-      )
     },
     created: function () {
       this.readStatus ()

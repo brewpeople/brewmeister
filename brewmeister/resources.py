@@ -58,13 +58,3 @@ class Stirrer(Resource):
         args = parser.parse_args()
         controller.stirring = args['on']
         return dict(okay=True), 201
-
-
-class Timer(Resource):
-    def get(self):
-        return timer.elapsed
-
-    def post(self):
-        timer.reset()
-        return dict(okay=True), 201
-
