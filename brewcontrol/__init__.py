@@ -63,6 +63,11 @@ class Stage(object):
     def complete(self, state):
         raise NotImplementedError
 
+    def to_dict(self):
+        return dict(started=self.started.isoformat() if self.started else None,
+                    finished=self.finished.isoformat() if self.finished else None,
+                    name=self.description)
+
 
 class Setup(Stage):
     def __init__(self, description):
@@ -81,6 +86,11 @@ class Confirmation(Stage):
         r = state.confirm
         state.confirm = False
         return r
+
+    def to_dict(self):
+        d = super(Confirmation, self).to_dict()
+        d['needsInteraction'] = True
+        return d
 
     def __repr__(self):
         return '<Stage:Confirm>'
@@ -103,9 +113,11 @@ class TemperatureReached(Stage):
     def __init__(self, temperature, description):
         super(TemperatureReached, self).__init__(description)
         self.temperature = temperature
+        self.recorded = {}
 
     def complete(self, state):
-        print("{} >= {}".format(state.wort_sensor.temperature, self.temperature))
+        now = datetime.datetime.now()
+        self.recorded[now.isoformat()] = state.wort_sensor.temperature
         reached = state.wort_sensor.temperature >= self.temperature
 
         if not reached:
@@ -115,6 +127,11 @@ class TemperatureReached(Stage):
 
     def __repr__(self):
         return '<Stage:Reached({} degC)>'.format(self.temperature)
+
+    def to_dict(self):
+        d = super(TemperatureReached, self).to_dict()
+        d['temps'] = self.recorded
+        return d
 
 
 class Brew(object):
@@ -154,7 +171,7 @@ class BrewControl(Resource):
             Setup("Initialize system"),
             Confirmation("Waiting for user input"),
             Wait(datetime.timedelta(seconds=5), "Waiting 5 seconds"),
-            TemperatureReached(25.0, "Waiting for temperature to reach 19 C"),
+            TemperatureReached(25.0, "Waiting for temperature to reach 25 C"),
         ]
 
         brew_id = len(brews)
@@ -171,18 +188,19 @@ class BrewInteraction(Resource):
         return {}
 
     def get(self, brew_id):
+        if brew_id >= len(brews):
+            abort(404, message="Brew does not exist")
+
         brew = brews[brew_id]
-        stages = [dict(started=s.started.isoformat() if s.started else None,
-                       finished=s.finished.isoformat() if s.finished else None,
-                       name=s.description,
-                       needsInteraction=isinstance(s, Confirmation))
-                  for s in brew.stages]
+        stages = [s.to_dict() for s in brew.stages]
         return dict(stages=stages)
 
 
-class Temperature(Resource):
+class Sensors(Resource):
     def get(self):
-        return {k: v.temperature for k, v in state.sensors.items()}
+        temps = {k: v.temperature for k, v in state.sensors.items()}
+        states = {k: v.state for k, v in state.states.items()}
+        return dict(temps=temps, states=states)
 
 
 class Switch(Resource):
@@ -199,8 +217,8 @@ class Switch(Resource):
 
 
 api = Api(app)
-api.add_resource(Temperature, '/temperature')
-api.add_resource(Switch, '/switch/<string:name>')
-api.add_resource(BrewList, '/brews')
-api.add_resource(BrewControl, '/brew')
-api.add_resource(BrewInteraction, '/brew/<int:brew_id>')
+api.add_resource(Sensors, '/control/sensors')
+api.add_resource(Switch, '/control/switch/<string:name>')
+api.add_resource(BrewList, '/control/brews')
+api.add_resource(BrewControl, '/control/brew')
+api.add_resource(BrewInteraction, '/control/brew/<int:brew_id>')
