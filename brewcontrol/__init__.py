@@ -174,7 +174,9 @@ class BrewInteraction(Resource):
         brew = brews[brew_id]
         stages = [dict(started=s.started.isoformat() if s.started else None,
                        finished=s.finished.isoformat() if s.finished else None,
-                       name=s.description) for s in brew.stages]
+                       name=s.description,
+                       needsInteraction=isinstance(s, Confirmation))
+                  for s in brew.stages]
         return dict(stages=stages)
 
 
