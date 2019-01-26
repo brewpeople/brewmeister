@@ -1,4 +1,4 @@
-from brewpi import app
+from brewcontrol import app
 from flask_script import Manager
 
 
