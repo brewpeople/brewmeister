@@ -35,9 +35,11 @@ class GPIOSwitch(object):
     def __init__(self, pin):
         gpio.setup(pin, gpio.OUT, initial=gpio.HIGH)
         self.pin = pin
+        self.state = False
 
     def switch(self, on):
         gpio.output(self.pin, gpio.LOW if on else gpio.HIGH)
+        self.state = on
 
 
 class GPIOState(object):
@@ -45,9 +47,9 @@ class GPIOState(object):
         gpio.setup(pin, gpio.IN)
         self.pin = pin
 
+    @property
     def state(self):
         return gpio.input(self.pin) == gpio.LOW
-
 
 
 sensors = {
@@ -63,6 +65,7 @@ switches = {
 
 states = {
     'valve': GPIOState(6),
+    'stirrer': switches['stirrer'],
 }
 
 
@@ -104,7 +107,7 @@ class State(Resource):
         if name not in states:
             abort(404, message="State {} not found".format(name))
 
-        return dict(state=states[name].state())
+        return dict(state=states[name].state)
 
 
 api = Api(app)
