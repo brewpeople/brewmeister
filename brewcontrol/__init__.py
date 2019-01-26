@@ -1,7 +1,7 @@
 import time
 import datetime
 import threading
-from .hardware import Sensor, GPIOSwitch
+from .hardware import Sensor, GPIOSwitch, GPIOState
 from flask import Flask, request
 from flask_restful import Api, Resource, abort
 
@@ -21,6 +21,11 @@ class HardwareState(object):
             'stirrer': GPIOSwitch(5),
         }
 
+        self.states = {
+            'valve': GPIOState(6),
+            'stirrer': self.switches['stirrer'],
+        }
+
         self.confirm = False
         self.thread = threading.Thread(target=self.run)
         self.thread.start()
@@ -28,6 +33,10 @@ class HardwareState(object):
     @property
     def wort_sensor(self):
         return self.sensors['wort']
+
+    @property
+    def stirrer(self):
+        return self.switches['stirrer']
 
     def run(self):
         while True:
@@ -53,6 +62,15 @@ class Stage(object):
 
     def complete(self, state):
         raise NotImplementedError
+
+
+class Setup(Stage):
+    def __init__(self, description):
+        super(Setup, self).__init__(description)
+
+    def complete(self, state):
+        state.stirrer.switch(False)
+        return True
 
 
 class Confirmation(Stage):
@@ -87,9 +105,13 @@ class TemperatureReached(Stage):
         self.temperature = temperature
 
     def complete(self, state):
-        # control gas
         print("{} >= {}".format(state.wort_sensor.temperature, self.temperature))
-        return state.wort_sensor.temperature >= self.temperature
+        reached = state.wort_sensor.temperature >= self.temperature
+
+        if not reached:
+            state.stirrer.switch(True)
+
+        return reached
 
     def __repr__(self):
         return '<Stage:Reached({} degC)>'.format(self.temperature)
@@ -119,14 +141,20 @@ brews = []
 state = HardwareState()
 
 
+class BrewList(Resource):
+    def get(self):
+        return dict(brews=[i for i,_ in enumerate(brews)])
+
+
 class BrewControl(Resource):
     def post(self):
         data = request.get_json()
 
         stages = [
+            Setup("Initialize system"),
             Confirmation("Waiting for user input"),
             Wait(datetime.timedelta(seconds=5), "Waiting 5 seconds"),
-            TemperatureReached(19.0, "Waiting for temperature to reach 19 C"),
+            TemperatureReached(25.0, "Waiting for temperature to reach 19 C"),
         ]
 
         brew_id = len(brews)
@@ -155,7 +183,22 @@ class Temperature(Resource):
         return {k: v.temperature for k, v in state.sensors.items()}
 
 
+class Switch(Resource):
+    def put(self, name):
+        if name not in state.switches:
+            abort(404, message="Switch not found")
+
+        data = request.get_json()
+
+        if 'on' not in data:
+            abort(400, message="Payload wrong")
+
+        state.switches[name].switch(data['on'])
+
+
 api = Api(app)
-api.add_resource(Temperature, '/temp')
+api.add_resource(Temperature, '/temperature')
+api.add_resource(Switch, '/switch/<string:name>')
+api.add_resource(BrewList, '/brews')
 api.add_resource(BrewControl, '/brew')
 api.add_resource(BrewInteraction, '/brew/<int:brew_id>')

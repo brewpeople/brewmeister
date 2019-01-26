@@ -45,33 +45,3 @@ class GPIOState(object):
     @property
     def state(self):
         return gpio.input(self.pin) == gpio.LOW
-
-
-# sensors = {
-#     'wort': Sensor('28-00000542d319'),
-#     'manual': Sensor('28-000009b7f883'),
-# }
-
-
-# switches = {
-#     'stirrer': GPIOSwitch(5),
-# }
-
-
-# states = {
-#     'valve': GPIOState(6),
-#     'stirrer': switches['stirrer'],
-# }
-
-
-# def read_sensors():
-#     print("Start reading sensors
-#     while True:
-#         for sensor in sensors.values():
-#             sensor.read_temperature()
-
-#         time.sleep(1)
-
-
-# read_sensors_thread = threading.Thread(target=read_sensors)
-# read_sensors_thread.start()
