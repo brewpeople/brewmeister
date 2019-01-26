@@ -38,23 +38,27 @@ class HardwareState(object):
 
 
 class Stage(object):
-    def __init__(self):
-        print("Constructor {}".format(self))
-        self.entered = None
+    def __init__(self, description):
+        self.started = None
+        self.finished = None
+        self.description = description
 
     def enter(self):
-        self.entered = datetime.datetime.now()
-        print("{} enter at {}".format(self, self.entered))
+        self.started = datetime.datetime.now()
+        print("{} enter at {}".format(self, self.started))
 
     def exit(self):
-        now = datetime.datetime.now()
-        print("{} exit at {}".format(self, now))
+        self.finished = datetime.datetime.now()
+        print("{} exit at {}".format(self, self.finished))
 
     def complete(self, state):
         raise NotImplementedError
 
 
 class Confirmation(Stage):
+    def __init__(self, description):
+        super(Confirmation, self).__init__(description)
+
     def complete(self, state):
         r = state.confirm
         state.confirm = False
@@ -65,19 +69,21 @@ class Confirmation(Stage):
 
 
 class Wait(Stage):
-    def __init__(self, duration):
+    def __init__(self, duration, description):
+        super(Wait, self).__init__(description)
         self.duration = duration
 
     def complete(self, state):
         now = datetime.datetime.now()
-        return now >= self.entered + self.duration
+        return now >= self.started + self.duration
 
     def __repr__(self):
         return '<Stage:Wait({})>'.format(self.duration)
 
 
 class TemperatureReached(Stage):
-    def __init__(self, temperature):
+    def __init__(self, temperature, description):
+        super(TemperatureReached, self).__init__(description)
         self.temperature = temperature
 
     def complete(self, state):
@@ -90,7 +96,8 @@ class TemperatureReached(Stage):
 
 
 class Brew(object):
-    def __init__(self, stages, state):
+    def __init__(self, name, stages, state):
+        self.name = name
         self.stages = stages
         self.state = state
         self.thread = threading.Thread(target=self.run)
@@ -114,25 +121,33 @@ state = HardwareState()
 
 class BrewControl(Resource):
     def post(self):
+        data = request.get_json()
+
         stages = [
-            Confirmation(),
-            Wait(datetime.timedelta(seconds=5)),
-            TemperatureReached(19.0),
+            Confirmation("Waiting for user input"),
+            Wait(datetime.timedelta(seconds=5), "Waiting 5 seconds"),
+            TemperatureReached(19.0, "Waiting for temperature to reach 19 C"),
         ]
 
         brew_id = len(brews)
-        brews.append(Brew(stages, state))
+        brews.append(Brew(data['name'], stages, state))
         return dict(id=brew_id)
 
 
 class BrewInteraction(Resource):
     def put(self, brew_id):
+        if brew_id >= len(brews):
+            abort(404, message="Brew does not exist")
         brew = brews[brew_id]
         brew.state.confirm = True
+        return {}
 
     def get(self, brew_id):
         brew = brews[brew_id]
-        return dict(stage=brew.current_stage)
+        stages = [dict(started=s.started.isoformat() if s.started else None,
+                       finished=s.finished.isoformat() if s.finished else None,
+                       name=s.description) for s in brew.stages]
+        return dict(stages=stages)
 
 
 class Temperature(Resource):
